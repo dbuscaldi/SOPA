@@ -9,8 +9,8 @@ import java.util.Vector;
 import edu.stanford.nlp.ling.TaggedWord;
 import fr.irit.sts.proxygenea.ConceptualComparer;
 import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.basic.Levenshtein;
 import fr.lipn.sts.tools.GoogleTFFactory;
-import fr.lipn.sts.tools.LevenshteinDistance;
 
 public class DepPair {
 	Vector<Dependency> d1;
@@ -118,7 +118,7 @@ public class DepPair {
 			double hw = Math.max(headW, dheadW);
 			double dw = Math.max(tailW, dtailW);
 			
-			Double ld = new Double(LevenshteinDistance.levenshteinSimilarity(label, dlabel));
+			Double ld = new Double(Levenshtein.characterBasedSimilarity(label, dlabel));
 			Double hsim = new Double(hw*ConceptualComparer.compare(head, dhead));
 			Double tailsim = new Double(dw*ConceptualComparer.compare(tail, dtail));
 			//System.err.println("H:Comparing "+head.toString()+" and "+dhead.toString()+" : "+hsim);

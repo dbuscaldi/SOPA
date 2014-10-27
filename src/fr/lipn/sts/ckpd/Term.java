@@ -1,7 +1,6 @@
 package fr.lipn.sts.ckpd;
 
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.TaggedWord;
 import fr.lipn.sts.tools.GoogleTFFactory;
 
 public class Term {
@@ -13,7 +12,15 @@ public class Term {
 		this.text=tw.word();
 		this.POS=tw.tag();
 	}
-
+	/**
+	 * Creates a term from an un-labelled fragment of text
+	 * @param w
+	 */
+	public Term(String w) {
+		this.text=w;
+		this.POS="UNK";
+	}
+	
 	public String repr() {
 		return text+"/"+POS;
 	}

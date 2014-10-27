@@ -8,8 +8,8 @@ import java.util.Vector;
 import edu.mit.jwi.item.ISynsetID;
 import edu.stanford.nlp.ling.TaggedWord;
 import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.basic.Levenshtein;
 import fr.lipn.sts.syntax.DepWord;
-import fr.lipn.sts.tools.LevenshteinDistance;
 import fr.lipn.sts.tools.WordNet;
 
 public class ConceptualComparer {
@@ -208,7 +208,7 @@ public class ConceptualComparer {
 			
 		}
 		
-		if(maxSim == 0) return LevenshteinDistance.levenshteinSimilarity(text, btext);
+		if(maxSim == 0) return Levenshtein.characterBasedSimilarity(text, btext);
 		else return maxSim;
 		
 	}

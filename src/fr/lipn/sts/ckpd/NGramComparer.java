@@ -6,12 +6,29 @@ import edu.stanford.nlp.util.ArrayCoreMap;
 public class NGramComparer {
 
 	public static double compare(ArrayCoreMap tSentence, ArrayCoreMap tSentence1){
-		double simValue=0.0;
 		HashSet<NGram> set0 = NGramFactory.getNGramSet(tSentence);
 		HashSet<NGram> set1 = NGramFactory.getNGramSet(tSentence1);
 		
 		NGram ngram0 = NGramFactory.getNGram(tSentence);
 		NGram ngram1 = NGramFactory.getNGram(tSentence);
+		
+		return calc(set0, ngram0, set1, ngram1);
+	}
+	
+	public static double compare(String s1, String s2){
+		HashSet<NGram> set0 = NGramFactory.getNGramSet(s1);
+		HashSet<NGram> set1 = NGramFactory.getNGramSet(s2);
+		
+		NGram ngram0 = NGramFactory.getNGram(s1);
+		NGram ngram1 = NGramFactory.getNGram(s2);
+		
+		return calc(set0, ngram0, set1, ngram1);
+		
+	}
+	
+	private static double calc(HashSet<NGram> set0, NGram ngram0, HashSet<NGram> set1, NGram ngram1) {
+		double simValue=0.0;
+		
 		NGram longestSent;
 		if(ngram0.getSize() > ngram1.getSize()) longestSent=ngram0;
 		else longestSent=ngram1;

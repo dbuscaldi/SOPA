@@ -53,5 +53,36 @@ public class NGramFactory {
 		}
 		return skipGramSet;
 	}
+	
+	public static HashSet<NGram> getNGramSet(String s1){
+		Vector<String> sentence = new Vector<String>();
+		String [] tSentence = s1.split("[\\w]+");
+    	
+		for(String w : tSentence){
+			sentence.add(w);
+		}
+		
+		HashSet<NGram> ngramSet = new HashSet<NGram>();
+		int maxN=sentence.size();
+		for(int i=0; i< maxN; i++){
+			for(int j=0; j<sentence.size(); j++) {
+				NGram ng = new NGram();
+				for(int k=j; k<=(j+i) && k < sentence.size(); k++){
+					ng.add(new Term(sentence.get(k)));
+				}
+				ngramSet.add(ng);
+			}
+		}
+		return ngramSet;
+	}
+
+	public static NGram getNGram(String s) {
+		NGram ng= new NGram();
+		String [] tSentence = s.split("[\\w]+");
+		for(String w : tSentence){
+			ng.add(new Term(w));
+		}
+		return ng;
+	}
 
 }

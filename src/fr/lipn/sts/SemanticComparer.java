@@ -28,6 +28,8 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import fr.irit.sts.proxygenea.ConceptualComparer;
+import fr.lipn.sts.basic.Levenshtein;
+import fr.lipn.sts.basic.TfIdfComparer;
 import fr.lipn.sts.ckpd.NGramComparer;
 import fr.lipn.sts.geo.BlueMarble;
 import fr.lipn.sts.geo.GeographicScopeComparer;
@@ -40,8 +42,6 @@ import fr.lipn.sts.semantic.JWSComparer;
 import fr.lipn.sts.semantic.SpectralComparer;
 import fr.lipn.sts.syntax.DepComparer;
 import fr.lipn.sts.tools.GoogleTFFactory;
-import fr.lipn.sts.tools.LevenshteinDistance;
-import fr.lipn.sts.tools.TfIdfComparer;
 import fr.lipn.sts.tools.WordNet;
 import fr.lipn.sts.twitter.TwitterComparer;
 
@@ -297,7 +297,7 @@ public class SemanticComparer {
 		    double wnsim=JWSComparer.compare(sent0, sent1);
 		    //double depsim = DepComparer.getSimilarity(i, tSentence, tSentence1);
 		    double depsim=0.5;
-		    double editsim = LevenshteinDistance.levenshteinSimilarity(sentences[0], sentences[1]);
+		    double editsim = Levenshtein.characterBasedSimilarity(sentences[0], sentences[1]);
 		    double IRsim = IRComparer.compare(sentences[0], sentences[1]);
 		    //double RBOsim = RBOComparer.compare(sentences[0], sentences[1]); //RBO measure for IR comparison
 		    double cosinesim = TfIdfComparer.compare(sent0, sent1);
