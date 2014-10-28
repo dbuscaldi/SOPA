@@ -39,7 +39,7 @@ public class Levenshtein {
      */
     public static float wordBasedSimilarity(String seq1, String seq2){
     	String [] s1 = seq1.split("[\\w]+");
-    	String [] s2 = seq1.split("[\\w]+");
+    	String [] s2 = seq2.split("[\\w]+");
     	
     	int len = Math.max(s1.length, s2.length);
     	int d = computeWordLevelDistance(s1, s2);
