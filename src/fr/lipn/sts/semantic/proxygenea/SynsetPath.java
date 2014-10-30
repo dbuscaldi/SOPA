@@ -1,4 +1,4 @@
-package fr.irit.sts.proxygenea;
+package fr.lipn.sts.semantic.proxygenea;
 
 import java.io.PrintStream;
 import java.util.Vector;

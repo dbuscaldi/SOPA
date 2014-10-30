@@ -1,4 +1,4 @@
-package fr.irit.sts.proxygenea;
+package fr.lipn.sts.semantic.proxygenea;
 
 import edu.mit.jwi.item.ISynsetID;
 import fr.lipn.sts.tools.WordNet;

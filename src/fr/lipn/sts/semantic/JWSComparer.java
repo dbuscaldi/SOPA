@@ -9,12 +9,12 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.util.ArrayCoreMap;
-import fr.irit.sts.proxygenea.ConceptualComparer;
-import fr.irit.sts.proxygenea.HyperPath;
-import fr.irit.sts.proxygenea.PathNode;
-import fr.irit.sts.proxygenea.SynsetPath;
 import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.semantic.proxygenea.ConceptualComparer;
+import fr.lipn.sts.semantic.proxygenea.HyperPath;
+import fr.lipn.sts.semantic.proxygenea.PathNode;
+import fr.lipn.sts.semantic.proxygenea.SynsetPath;
 import fr.lipn.sts.tools.GoogleTFFactory;
 import fr.lipn.sts.tools.WordNet;
 

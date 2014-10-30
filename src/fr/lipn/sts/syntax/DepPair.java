@@ -7,9 +7,9 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import edu.stanford.nlp.ling.TaggedWord;
-import fr.irit.sts.proxygenea.ConceptualComparer;
 import fr.lipn.sts.SemanticComparer;
 import fr.lipn.sts.basic.Levenshtein;
+import fr.lipn.sts.semantic.proxygenea.ConceptualComparer;
 import fr.lipn.sts.tools.GoogleTFFactory;
 
 public class DepPair {
