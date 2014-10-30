@@ -1,4 +1,4 @@
-package fr.lipn.sts.ir.aux;
+package fr.lipn.sts.ir.indexing;
 
 import java.io.BufferedReader;
 import java.io.File;

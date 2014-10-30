@@ -17,6 +17,7 @@ import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
+import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.SemanticComparer;
 /**
  * This class implements the RBO measure by Webber, Moffat, Zobel (2010) "A similarity measure for indefinite rankings"
@@ -24,7 +25,7 @@ import fr.lipn.sts.SemanticComparer;
  *
  */
 public class RBOComparer {
-	private static String index = "/tempo/corpora/AQUAINT_indexed";
+	//private static String index = "/tempo/corpora/AQUAINT_indexed";
 	
 	private final static double p=0.95; //RBO parameter
 	private final static int MAXHITS=100;
@@ -32,7 +33,7 @@ public class RBOComparer {
 	public static double compare(String req1, String req2){
 		double ret = 0d;
 		try {
-			IndexReader reader = IndexReader.open(FSDirectory.open(new File(index)));
+			IndexReader reader = IndexReader.open(FSDirectory.open(new File(SOPAConfiguration.IR_INDEX)));
 			IndexSearcher searcher = new IndexSearcher(reader);
 			searcher.setSimilarity(new BM25Similarity());
 			Analyzer analyzer = new EnglishAnalyzer(Version.LUCENE_41);

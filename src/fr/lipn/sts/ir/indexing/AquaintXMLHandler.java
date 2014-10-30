@@ -1,4 +1,4 @@
-package fr.lipn.sts.ir;
+package fr.lipn.sts.ir.indexing;
 
 import java.io.File;
 import java.io.IOException;

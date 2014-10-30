@@ -4,19 +4,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.TaggedWord;
+import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.tools.GoogleTFFactory;
 
 public class TfIdfComparer {
 
-	public static double compare(ArrayList<TaggedWord> tSentence, ArrayList<TaggedWord> tSentence1){
+	public static double compare(ArrayCoreMap tSentence, ArrayCoreMap tSentence1){
 		HashMap<String, Integer> freqs1 = new HashMap<String, Integer>();
 		HashMap<String, Integer> freqs2 = new HashMap<String, Integer>();
 		
 		HashSet<String> shared = new HashSet<String>();
 		HashMap<String, Double> idfs = new HashMap<String, Double>();
 		
-		for(TaggedWord t : tSentence){
+		for (CoreLabel t : tSentence.get(CoreAnnotations.TokensAnnotation.class)) {
 			String w = t.word();
 			Integer freq = freqs1.get(w);
 			if(freq == null) freq=new Integer(1);
@@ -29,7 +32,7 @@ public class TfIdfComparer {
 			}
 		}
 		
-		for(TaggedWord t : tSentence1){
+		for (CoreLabel t : tSentence1.get(CoreAnnotations.TokensAnnotation.class)) {
 			String w = t.word();
 			Integer freq = freqs2.get(w);
 			if(freq == null) freq=new Integer(1);

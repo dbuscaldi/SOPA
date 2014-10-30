@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
-import java.util.zip.GZIPInputStream;
 
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
@@ -27,13 +26,12 @@ import edu.mit.jwi.morph.WordnetStemmer;
 public class WordNet {
 	public static IDictionary dict;
 	public static WordnetStemmer stemmer;
-	private static String wnhome="Z:/tools/WN3.0";
+	private static String wnhome;
 	private static String icFile="res/ic-bnc.dat";
 	private static HashMap <String, Double> icMap;
 	private static double maxIC=0d;
 	
 	public static void init(){
-		//String wnhome = System . getenv (" WNHOME ");
 		String path = wnhome + File.separator + "dict";
 		URL url;
 		try {

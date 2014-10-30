@@ -6,7 +6,11 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import edu.mit.jwi.item.ISynsetID;
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.TaggedWord;
+import edu.stanford.nlp.util.ArrayCoreMap;
+import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.SemanticComparer;
 import fr.lipn.sts.basic.Levenshtein;
 import fr.lipn.sts.syntax.DepWord;
@@ -14,14 +18,13 @@ import fr.lipn.sts.tools.WordNet;
 
 public class ConceptualComparer {
 
-	public static double compare(ArrayList<TaggedWord> tSentence,
-			ArrayList<TaggedWord> tSentence1) {
+	public static double compare(ArrayCoreMap tSentence, ArrayCoreMap tSentence1) {
 		
 		HashMap<String, HashSet<HyperPath>> aSenses = new HashMap<String, HashSet<HyperPath>>();
-		for(TaggedWord tw : tSentence){
+		for (CoreLabel word : tSentence.get(CoreAnnotations.TokensAnnotation.class)) {
 			HashSet<ISynsetID> s1_syns = new HashSet<ISynsetID>();
-			String text=tw.word();
-			String pos =tw.tag();
+			String text=word.word(); //Use lemma? -> .getString(CoreAnnotations.LemmaAnnotation.class);
+			String pos = word.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 			s1_syns.addAll(WordNet.getNounSynsets(text, pos));
 			HashSet<HyperPath> paths_1= new HashSet<HyperPath>();
 			for(ISynsetID syn : s1_syns){
@@ -32,10 +35,10 @@ public class ConceptualComparer {
 		}
 		
 		HashMap<String, HashSet<HyperPath>> bSenses = new HashMap<String, HashSet<HyperPath>>();
-		for(TaggedWord tw : tSentence1){
+		for (CoreLabel word : tSentence1.get(CoreAnnotations.TokensAnnotation.class)) {
 			HashSet<ISynsetID> s2_syns = new HashSet<ISynsetID>();
-			String text=tw.word();
-			String pos =tw.tag();
+			String text=word.word();
+			String pos = word.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 			s2_syns.addAll(WordNet.getNounSynsets(text, pos));
 			HashSet<HyperPath> paths_2= new HashSet<HyperPath>();
 			for(ISynsetID syn : s2_syns){
@@ -228,20 +231,17 @@ public class ConceptualComparer {
 		float l1 = (float)p1.size();
 		float l2 = (float)p2.size();
 		
-		switch(SemanticComparer.STRUCTURAL_MEASURE){
-			case SemanticComparer.PROXYGENEA1:
+		switch(SOPAConfiguration.STRUCTURAL_MEASURE){
+			case SOPAConfiguration.PROXYGENEA1:
 				ret= (cd*cd)/(l1*l2); break; 
-			case SemanticComparer.PROXYGENEA2:
+			case SOPAConfiguration.PROXYGENEA2:
 				ret = cd/(l1+l2-cd); break;
-			case SemanticComparer.PROXYGENEA3:
+			case SOPAConfiguration.PROXYGENEA3:
 				ret = 1f/(1f+l1+l2-2*cd); break;
-			case SemanticComparer.WU_PALMER:
+			case SOPAConfiguration.WU_PALMER:
 				ret= (2*cd)/(l1+l2); break;
 		}
 		return ret;
-	}
-	
-
-	
+	}	
 
 }

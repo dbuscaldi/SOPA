@@ -1,4 +1,4 @@
-package fr.lipn.sts.syntax;
+package fr.lipn.sts.syntax.joseph;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +12,9 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import fr.lipn.sts.syntax.DepPair;
+import fr.lipn.sts.syntax.Dependency;
 
 
 public class XMLDepFileHandler extends DefaultHandler {

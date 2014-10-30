@@ -16,8 +16,7 @@ public class TestCoreNLP {
 
 	public static void main(String[] args) {
 		SemanticComparer.VERBOSE=true;
-		
-		GoogleTFFactory.init("/tempo/corpora/GoogleW1T/vocab/vocab");
+		SOPAConfiguration.load();
 		
 		Properties props = new Properties();
 	    props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, sentiment, truecase");

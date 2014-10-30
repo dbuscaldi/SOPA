@@ -5,23 +5,27 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import edu.mit.jwi.item.ISynsetID;
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.TaggedWord;
+import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.irit.sts.proxygenea.ConceptualComparer;
 import fr.irit.sts.proxygenea.HyperPath;
 import fr.irit.sts.proxygenea.PathNode;
 import fr.irit.sts.proxygenea.SynsetPath;
+import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.SemanticComparer;
 import fr.lipn.sts.tools.GoogleTFFactory;
 import fr.lipn.sts.tools.WordNet;
 
 public class JWSComparer {
 	
-	public static double compare(ArrayList<TaggedWord> tSentence, ArrayList<TaggedWord> tSentence1) {
+	public static double compare(ArrayCoreMap tSentence, ArrayCoreMap tSentence1) {
 		HashMap<String, HashSet<HyperPath>> aSenses = new HashMap<String, HashSet<HyperPath>>();
-		for(TaggedWord tw : tSentence){
+		for (CoreLabel word : tSentence.get(CoreAnnotations.TokensAnnotation.class)) {
 			HashSet<ISynsetID> s1_syns = new HashSet<ISynsetID>();
-			String text=tw.word();
-			String pos =tw.tag();
+			String text=word.word();
+			String pos = word.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 			s1_syns.addAll(WordNet.getNounSynsets(text, pos));
 			HashSet<HyperPath> paths_1= new HashSet<HyperPath>();
 			for(ISynsetID syn : s1_syns){
@@ -32,10 +36,10 @@ public class JWSComparer {
 		}
 		
 		HashMap<String, HashSet<HyperPath>> bSenses = new HashMap<String, HashSet<HyperPath>>();
-		for(TaggedWord tw : tSentence1){
+		for (CoreLabel word : tSentence1.get(CoreAnnotations.TokensAnnotation.class)) {
 			HashSet<ISynsetID> s2_syns = new HashSet<ISynsetID>();
-			String text=tw.word();
-			String pos =tw.tag();
+			String text=word.word();
+			String pos = word.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 			s2_syns.addAll(WordNet.getNounSynsets(text, pos));
 			HashSet<HyperPath> paths_2= new HashSet<HyperPath>();
 			for(ISynsetID syn : s2_syns){
@@ -110,10 +114,10 @@ public class JWSComparer {
 		/*System.err.println(lcs.getSyn()+" : "+cd);
 		System.err.println(p1.getSyn()+" : "+l1);
 		System.err.println(p2.getSyn()+" : "+l2);*/
-		switch(SemanticComparer.IC_MEASURE){
-			case SemanticComparer.LIN:
+		switch(SOPAConfiguration.IC_MEASURE){
+			case SOPAConfiguration.LIN:
 				ret= ((cd*cd)/(l1+l2)); break; 
-			case SemanticComparer.JIANG_CONRATH:
+			case SOPAConfiguration.JIANG_CONRATH:
 				ret = (1.0d/Math.abs(1+l1+l2-2*cd)); break;
 		}
 		//System.err.println("JWS score: "+ret);

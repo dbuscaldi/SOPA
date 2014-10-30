@@ -9,11 +9,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.TaggedWord;
+import edu.stanford.nlp.util.ArrayCoreMap;
+import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.SemanticComparer;
 
 public class SpectralComparer {
-	private static String database="/tempo/indexes/googleNgramsEN.db";
+	
 	private static Connection c=null;
 	
 	public static int getFrequency(String word) {
@@ -116,11 +120,11 @@ public class SpectralComparer {
 	 * @param tSentence1
 	 * @return
 	 */
-	public static double compare(ArrayList<TaggedWord> tSentence, ArrayList<TaggedWord> tSentence1){
+	public static double compare(ArrayCoreMap tSentence, ArrayCoreMap tSentence1){
 		double res = 0d;
 		try {
 		      Class.forName("org.sqlite.JDBC");
-		      c = DriverManager.getConnection("jdbc:sqlite:"+database);
+		      c = DriverManager.getConnection("jdbc:sqlite:"+SOPAConfiguration.NGRAMS_DB);
 		      c.setAutoCommit(false);
 		      
 		      
@@ -134,26 +138,26 @@ public class SpectralComparer {
 		//Compare only on words that are not shared between the two sentences
 		HashSet<String> sharedWords = new HashSet<String>();
 		HashSet<String> sW1 = new HashSet<String>();
-		for(TaggedWord tw : tSentence) {
-			sharedWords.add(tw.word().toLowerCase());
+		for (CoreLabel word : tSentence.get(CoreAnnotations.TokensAnnotation.class)) {
+			sharedWords.add(word.word().toLowerCase());
 		}
-		for(TaggedWord tw1 : tSentence1) {
-			sW1.add(tw1.word().toLowerCase());
+		for (CoreLabel word : tSentence1.get(CoreAnnotations.TokensAnnotation.class)) {
+			sW1.add(word.word().toLowerCase());
 		}
 		sharedWords.retainAll(sW1);
 		
 		
-		for(TaggedWord tw : tSentence){
+		for (CoreLabel tw : tSentence.get(CoreAnnotations.TokensAnnotation.class)) {
 			String w=tw.word().toLowerCase();
-			char pos=tw.tag().toLowerCase().charAt(0);
+			char pos=tw.get(CoreAnnotations.PartOfSpeechAnnotation.class).toLowerCase().charAt(0);
 			if(!sharedWords.contains(w)) {
-				double minDist=10; //NOTE: is 10 enough? --kinda penalization for not aligned words
+				double minDist=10; //NOTE: is 10 enough? -- think about the penalization for not aligned words
 				String bestMatch="None.";
 				if(pos=='n' || pos=='v' || pos=='r' || pos=='j') {
-					for(TaggedWord tw1 : tSentence1){
+					for (CoreLabel tw1 : tSentence.get(CoreAnnotations.TokensAnnotation.class)) {
 						String w1=tw1.word().toLowerCase();
 						if(!sharedWords.contains(w1)) {
-							char pos1=tw1.tag().toLowerCase().charAt(0);
+							char pos1=tw1.get(CoreAnnotations.PartOfSpeechAnnotation.class).toLowerCase().charAt(0);
 							if(!w.equals(w1) && pos==pos1){
 								double d = getSimilarity(tw.word(), tw1.word());
 								//if(SemanticComparer.VERBOSE) System.err.println("[Spectral] Similarity between "+tw.word()+" and "+tw1.word()+" : "+d);

@@ -4,15 +4,14 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import edu.mit.jwi.item.ISynsetID;
 import edu.mit.jwi.item.POS;
+import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
+import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.SemanticComparer;
 import fr.lipn.sts.tools.WordNet;
 
@@ -44,20 +43,20 @@ public class GeographicScopeComparer {
 	    return locs;
 	}
 	
-	public static double compare(ArrayList<TaggedWord> tSentence, ArrayList<TaggedWord> tSentence1, List<List<CoreLabel>> cSentence, List<List<CoreLabel>> cSentence1) {
+	public static double compare(ArrayCoreMap tSentence, ArrayCoreMap tSentence1) {
 		HashSet<String> off1= new HashSet<String>();
 		HashSet<String> off2= new HashSet<String>();
 		
 		HashSet<ISynsetID> s1_syns = new HashSet<ISynsetID>();
-		for(TaggedWord tw : tSentence){
+		for (CoreLabel tw : tSentence.get(CoreAnnotations.TokensAnnotation.class)) {
 			String text=tw.word();
-			String pos =tw.tag();
+			String pos = tw.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 			s1_syns.addAll(WordNet.getSynsets(text, pos));
 		}
 		HashSet<ISynsetID> s2_syns = new HashSet<ISynsetID>();
-		for(TaggedWord tw : tSentence1){
+		for (CoreLabel tw : tSentence1.get(CoreAnnotations.TokensAnnotation.class)) {
 			String text=tw.word();
-			String pos =tw.tag();
+			String pos = tw.get(CoreAnnotations.PartOfSpeechAnnotation.class);
 			s2_syns.addAll(WordNet.getSynsets(text, pos));
 		}
 		
@@ -85,46 +84,42 @@ public class GeographicScopeComparer {
 			if(BlueMarble.hasLocs(synID)) off2.add(synID);
 		}
 		/** now deal with Named Entities */
-		for (List<CoreLabel> lcl : cSentence) {
-			boolean in=false;
-			StringBuffer buf = new StringBuffer();
-			for (CoreLabel word : lcl) {
-				String tag = word.getString(AnswerAnnotation.class);
-				if(tag.equals("PERSON")){
-					buf.append(word.word());
-					buf.append(" ");
-					in=true;
-				} else {
-					if(in==true) {
-						off1.addAll(getLocsforNE(buf.toString().trim()));
-						if(SemanticComparer.VERBOSE) System.err.println("got geoinfo for leader "+buf);
-						buf.delete(0, buf.length());
-					}
-					in=false;
+		boolean in=false;
+		StringBuffer buf = new StringBuffer();
+		for (CoreLabel word : tSentence.get(CoreAnnotations.TokensAnnotation.class)) {
+			String tag = word.getString(AnswerAnnotation.class);
+			if(tag.equals("PERSON")){
+				buf.append(word.word());
+				buf.append(" ");
+				in=true;
+			} else {
+				if(in==true) {
+					off1.addAll(getLocsforNE(buf.toString().trim()));
+					if(SemanticComparer.VERBOSE) System.err.println("got geoinfo for leader "+buf);
+					buf.delete(0, buf.length());
 				}
-	     	}
-        }
-		
-		for (List<CoreLabel> lcl : cSentence1) {
-			boolean in=false;
-			StringBuffer buf = new StringBuffer();
-			for (CoreLabel word : lcl) {
-				String tag = word.getString(AnswerAnnotation.class);
-				if(tag.equals("PERSON")){
-					buf.append(word.word());
-					buf.append(" ");
-					in=true;
-				} else {
-					if(in==true) {
-						off2.addAll(getLocsforNE(buf.toString().trim()));
-						if(SemanticComparer.VERBOSE) System.err.println("got geoinfo for leader "+buf);
-						buf.delete(0, buf.length());
-					}
-					in=false;
+				in=false;
+			}
+	    }
+        
+		in=false;
+		buf = new StringBuffer();
+		for (CoreLabel word : tSentence1.get(CoreAnnotations.TokensAnnotation.class)) {
+			String tag = word.getString(AnswerAnnotation.class);
+			if(tag.equals("PERSON")){
+				buf.append(word.word());
+				buf.append(" ");
+				in=true;
+			} else {
+				if(in==true) {
+					off2.addAll(getLocsforNE(buf.toString().trim()));
+					if(SemanticComparer.VERBOSE) System.err.println("got geoinfo for leader "+buf);
+					buf.delete(0, buf.length());
 				}
-	     	}
-        }
-		
+				in=false;
+			}
+     	}
+        
 		/*** now compute weights **/
 		
 		if(off1.size()==0 && off2.size()==0) {

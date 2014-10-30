@@ -1,11 +1,8 @@
 package fr.lipn.sts.ner;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.Reader;
-import java.io.StringReader;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Properties;
 import java.util.Vector;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -22,20 +19,26 @@ import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
-import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
-import edu.stanford.nlp.process.DocumentPreprocessor;
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TreeCoreAnnotations;
+import edu.stanford.nlp.util.CoreMap;
 
 public class DBPediaChunkBasedAnnotator {
 	private String termIndexPath;
-	private LexicalizedParser parser;
+	private StanfordCoreNLP pipeline;
 	
 	private static int MAX_ANNOTS=5;
 
 	public DBPediaChunkBasedAnnotator(String termIndexPath) {
 		this.termIndexPath=termIndexPath;
-		 parser = LexicalizedParser.loadModel("lib/englishPCFG.ser.gz");
+		 Properties props = new Properties();
+		 props.setProperty("annotators", "tokenize, ssplit, pos, lemma, parse");
+		 //props.setProperty("ssplit.isOneSentence", "true"); //every string is one sentence
+		 
+		 pipeline = new StanfordCoreNLP(props);
 	}
 	
 	public HashMap<String, Float> annotateTop(String document) { //returns only top annotation
@@ -48,11 +51,13 @@ public class DBPediaChunkBasedAnnotator {
 			
 			Analyzer analyzer = new EnglishAnalyzer(Version.LUCENE_44);
 			
-			Reader r = new BufferedReader(new StringReader(document));
 			Vector<String> fragments = new Vector<String>();
 			
-			for(List<HasWord> sentence : new DocumentPreprocessor(r)) {
-				Tree parse = parser.apply(sentence);
+			Annotation ann = new Annotation(document);
+			pipeline.annotate(ann);
+			
+			for(CoreMap sentence : ann.get(CoreAnnotations.SentencesAnnotation.class)) {
+				Tree parse = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
 				for(Tree p : parse){
 					if(p.label().value().equals("NP") && p.isPrePreTerminal()) {
 						//p.pennPrint();
@@ -115,11 +120,13 @@ public class DBPediaChunkBasedAnnotator {
 			
 			Analyzer analyzer = new EnglishAnalyzer(Version.LUCENE_44);
 			
-			Reader r = new BufferedReader(new StringReader(document));
 			Vector<String> fragments = new Vector<String>();
 			
-			for(List<HasWord> sentence : new DocumentPreprocessor(r)) {
-				Tree parse = parser.apply(sentence);
+			Annotation ann = new Annotation(document);
+			pipeline.annotate(ann);
+			
+			for(CoreMap sentence : ann.get(CoreAnnotations.SentencesAnnotation.class)) {
+				Tree parse = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
 				for(Tree p : parse){
 					if(p.label().value().equals("NP") && p.isPrePreTerminal()) {
 						//p.pennPrint();
