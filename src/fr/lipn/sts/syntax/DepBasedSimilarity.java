@@ -14,9 +14,10 @@ import edu.stanford.nlp.trees.TreeCoreAnnotations;
 import edu.stanford.nlp.trees.TreebankLanguagePack;
 import edu.stanford.nlp.trees.TypedDependency;
 import edu.stanford.nlp.util.ArrayCoreMap;
+import fr.lipn.sts.measures.SimilarityMeasure;
 import fr.lipn.sts.syntax.joseph.XMLDepFileHandler;
 
-public class DepComparer {
+public class DepBasedSimilarity implements SimilarityMeasure {
 	private static Vector<DepPair> parsedContent;
 	
 	public static void parse(String xmlFile) {
@@ -56,7 +57,8 @@ public class DepComparer {
 		for (Object object : list) {
 			typedDependency = (TypedDependency) object;
 			System.out.println("Dependency Name"+typedDependency.dep().nodeString()+ " :: "+ "Node"+typedDependency.reln());
-			Dependency d = new Dependency(typedDependency.reln().getShortName(), typedDependency.gov().nodeString(), typedDependency.dep().nodeString());
+			//Dependency d = new Dependency(typedDependency.reln().getShortName(), typedDependency.gov().nodeString(), typedDependency.dep().nodeString());
+			Dependency d = new Dependency(typedDependency.reln().getShortName(), typedDependency.gov(), typedDependency.dep());
 			res.add(d);  
 		}
 		
@@ -68,10 +70,16 @@ public class DepComparer {
 		Vector<Dependency> d0 = getDeps(tree0);
 		Tree tree1 = sent1.get(TreeCoreAnnotations.TreeAnnotation.class);
 		Vector<Dependency> d1 = getDeps(tree1);
+		for(Dependency d : d0) System.err.println(d);
 		
 		DepPair deps = new DepPair(d0, d1);
+		deps.setAlignments();
 		
 		return deps.getDepScore();
+	}
+	@Override
+	public double compare(Object o1, Object o2) {
+		return compare((ArrayCoreMap)o1, (ArrayCoreMap)o2);
 	}
 
 }

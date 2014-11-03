@@ -8,9 +8,10 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.measures.SimilarityMeasure;
 import fr.lipn.sts.tools.GoogleTFFactory;
 
-public class NERComparer {
+public class NERSimilarity implements SimilarityMeasure {
 
 	public static double compare(ArrayCoreMap cSentence, ArrayCoreMap cSentence1) {
 		HashMap<String, HashSet<String>> s1Map = new HashMap<String, HashSet<String>>();
@@ -70,6 +71,11 @@ public class NERComparer {
 		/* old version 
 		if(size_A > 0 && size_B > 0) return (double)(2*overlap)/(double)(size_A+size_B); //Dice coefficient
 		else return 0d;*/
+	}
+
+	@Override
+	public double compare(Object o1, Object o2) {
+		return compare((ArrayCoreMap)o1, (ArrayCoreMap)o2);
 	}
 
 }

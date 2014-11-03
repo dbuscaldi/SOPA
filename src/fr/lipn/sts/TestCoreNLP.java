@@ -6,17 +6,27 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.ArrayCoreMap;
-import fr.lipn.sts.ckpd.NGramComparer;
-import fr.lipn.sts.ckpd.SkipGramComparer;
-import fr.lipn.sts.ir.web.WebIRComparer;
-import fr.lipn.sts.ner.NERComparer;
+import fr.lipn.sts.basic.Levenshtein;
+import fr.lipn.sts.basic.TfIdfSimilarity;
+import fr.lipn.sts.ckpd.NGramSimilarity;
+import fr.lipn.sts.ckpd.SkipGramSimilarity;
+import fr.lipn.sts.geo.GeographicScopeSimilarity;
+import fr.lipn.sts.ir.IRSimilarity;
+import fr.lipn.sts.ir.web.WebIRSimilarity;
+import fr.lipn.sts.ner.NERSimilarity;
+import fr.lipn.sts.semantic.JWSSimilarity;
+import fr.lipn.sts.semantic.proxygenea.ConceptualSimilarity;
+import fr.lipn.sts.syntax.DepBasedSimilarity;
 import fr.lipn.sts.tools.GoogleTFFactory;
+import fr.lipn.sts.tools.WordNet;
 
 public class TestCoreNLP {
 
 	public static void main(String[] args) {
 		SemanticComparer.VERBOSE=true;
 		SOPAConfiguration.load();
+		GoogleTFFactory.init(SOPAConfiguration.GoogleTF);
+		WordNet.init();
 		
 		Properties props = new Properties();
 	    props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse, sentiment, truecase");
@@ -43,15 +53,34 @@ public class TestCoreNLP {
     	ArrayCoreMap sent0 = (ArrayCoreMap) ann0.get(CoreAnnotations.SentencesAnnotation.class).get(0);
     	ArrayCoreMap sent1 = (ArrayCoreMap) ann1.get(CoreAnnotations.SentencesAnnotation.class).get(0);
     	
-    	double NERsim=NERComparer.compare(sent0, sent1);
-    	double sim=NGramComparer.compare(sent0, sent1);
-    	double sksim=SkipGramComparer.compare(sent0, sent1);
-    	double websim = WebIRComparer.compare(text1, text2);
-    	
+    	double NERsim=NERSimilarity.compare(sent0, sent1);
+    	double sim=NGramSimilarity.compare(sent0, sent1);
+    	double sksim=SkipGramSimilarity.compare(sent0, sent1);
+    	//double websim = WebIRSimilarity.compare(text1, text2);
+    	double conceptsim=ConceptualSimilarity.compare(sent0, sent1);
+	    double wnsim=JWSSimilarity.compare(sent0, sent1);
+	    double depsim = DepBasedSimilarity.compare(sent0, sent1);
+	    double editsim = Levenshtein.characterBasedSimilarity(text1, text2);
+	    double editsim1 = Levenshtein.wordBasedSimilarity(text1, text2);
+	    double IRsim = IRSimilarity.compare(text1, text2);
+	    
+	    //double RBOsim = RBOSimilarity.compare(sentences[0], sentences[1]); //RBO measure for IR comparison
+	    //double cosinesim = TfIdfSimilarity.compare(sent0, sent1);
+	    //double geosim = GeographicScopeSimilarity.compare(sent0, sent1);
+	    //double spectsim = SpectralSimilarity.compare(sent0, sent1);
+	    
     	System.err.println("NER sim: "+NERsim);
     	System.err.println("CKPD sim: "+sim);
     	System.err.println("Skipgram sim: "+sksim);
-    	System.err.println("Websim: "+websim);
+    	//System.err.println("Websim: "+websim);
+    	System.err.println("Conceptual Similarity: "+conceptsim);
+    	System.err.println("WN sim (Mihalcea): "+wnsim);
+    	System.err.println("Syntactic Dependences similarity: "+depsim);
+    	System.err.println("Edit distance similarity(chars): "+editsim);
+    	System.err.println("Edit distance similarity(words): "+editsim1);
+    	System.err.println("IR similarity: "+IRsim);
+    	
+    	
 	}
 
 }

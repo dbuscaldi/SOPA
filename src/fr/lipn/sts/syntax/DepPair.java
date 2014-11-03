@@ -9,7 +9,7 @@ import java.util.Vector;
 import edu.stanford.nlp.ling.TaggedWord;
 import fr.lipn.sts.SemanticComparer;
 import fr.lipn.sts.basic.Levenshtein;
-import fr.lipn.sts.semantic.proxygenea.ConceptualComparer;
+import fr.lipn.sts.semantic.proxygenea.ConceptualSimilarity;
 import fr.lipn.sts.tools.GoogleTFFactory;
 
 public class DepPair {
@@ -75,8 +75,7 @@ public class DepPair {
 		return "NN";
 	}
 	
-	public void setPOStags(ArrayList<TaggedWord> tSentence,
-			ArrayList<TaggedWord> tSentence1) {
+	public void setPOStags(ArrayList<TaggedWord> tSentence, ArrayList<TaggedWord> tSentence1) {
 		
 		for(Dependency d : d1) {
 			int hp = d.head.getPosition()-1;
@@ -119,8 +118,8 @@ public class DepPair {
 			double dw = Math.max(tailW, dtailW);
 			
 			Double ld = new Double(Levenshtein.characterBasedSimilarity(label, dlabel));
-			Double hsim = new Double(hw*ConceptualComparer.compare(head, dhead));
-			Double tailsim = new Double(dw*ConceptualComparer.compare(tail, dtail));
+			Double hsim = new Double(hw*ConceptualSimilarity.sim(head, dhead));
+			Double tailsim = new Double(dw*ConceptualSimilarity.sim(tail, dtail));
 			//System.err.println("H:Comparing "+head.toString()+" and "+dhead.toString()+" : "+hsim);
 			//System.err.println("T:Comparing "+tail.toString()+" and "+dtail.toString()+" : "+tailsim);
 			Double score;

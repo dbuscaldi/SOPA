@@ -13,10 +13,11 @@ import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.SemanticComparer;
 import fr.lipn.sts.basic.Levenshtein;
+import fr.lipn.sts.measures.SimilarityMeasure;
 import fr.lipn.sts.syntax.DepWord;
 import fr.lipn.sts.tools.WordNet;
 
-public class ConceptualComparer {
+public class ConceptualSimilarity implements SimilarityMeasure {
 
 	public static double compare(ArrayCoreMap tSentence, ArrayCoreMap tSentence1) {
 		
@@ -59,7 +60,7 @@ public class ConceptualComparer {
 					HashSet<HyperPath> paths2 = bSenses.get(target);
 					for(HyperPath p2 : paths2){
 						if(p1.comparableTo(p2)){
-							float w0 = compare(p1,p2);
+							float w0 = sim(p1,p2);
 							if (w0 > maxSim) {
 								maxSim=w0;
 								targetSim=target;
@@ -125,7 +126,7 @@ public class ConceptualComparer {
 						p1.print(System.err);
 						p2.print(System.err);
 						if(p1.comparableTo(p2)){
-							float w0 = compare(p1,p2);
+							float w0 = sim(p1,p2);
 							if (w0 > maxSim) {
 								maxSim=w0;
 								targetSim=target;
@@ -164,7 +165,7 @@ public class ConceptualComparer {
 	 * @param b
 	 * @return
 	 */
-	public static float compare(DepWord a, DepWord b){
+	public static float sim(DepWord a, DepWord b){
 		HashSet<ISynsetID> s1_syns = new HashSet<ISynsetID>();
 		String text=a.getWord();
 		String pos =a.getPOS();
@@ -201,7 +202,7 @@ public class ConceptualComparer {
 			for(HyperPath p1 : paths_1) {
 				for(HyperPath p2 : paths_2){
 					if(p1.comparableTo(p2)){
-						float w0 = compare(p1,p2);
+						float w0 = sim(p1,p2);
 						if (w0 > maxSim) {
 							maxSim=w0;
 						}
@@ -216,7 +217,7 @@ public class ConceptualComparer {
 		
 	}
 	
-	private static float compare(SynsetPath p1, SynsetPath p2){
+	private static float sim(SynsetPath p1, SynsetPath p2){
 		float ret =0f;
 		PathNode lcs = leastCommonSubsumer(p1, p2);
 		if(lcs==null) {
@@ -242,6 +243,11 @@ public class ConceptualComparer {
 				ret= (2*cd)/(l1+l2); break;
 		}
 		return ret;
+	}
+
+	@Override
+	public double compare(Object o1, Object o2) {
+		return compare((ArrayCoreMap)o1, (ArrayCoreMap)o2);
 	}	
 
 }

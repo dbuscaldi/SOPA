@@ -1,11 +1,19 @@
 package fr.lipn.sts.syntax;
 
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.trees.TreeGraphNode;
+
 public class DepWord {
 	private String word;
 	private int position;
 	private String POS;
 	
+	/**
+	 * Joseph-based DepWord constructor
+	 * @param seq
+	 */
 	public DepWord(String seq){
+		
 		String [] items = seq.split("-");
 		
 		try{
@@ -27,6 +35,16 @@ public class DepWord {
 		else POS=null;
 		
 		//if(this.word.equals("") || this.word==null) System.err.println("error-seq: "+seq);
+		
+	}
+	
+	public DepWord(TreeGraphNode n) {
+		this.word=n.nodeString();
+		this.position=0;
+		CoreLabel label=n.label();
+		this.POS=label.tag();
+		
+		if(this.word.equals("ROOT")) this.POS="NN";
 	}
 	
 	public boolean isRoot(){

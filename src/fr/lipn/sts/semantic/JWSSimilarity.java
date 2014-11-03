@@ -11,14 +11,15 @@ import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.SemanticComparer;
-import fr.lipn.sts.semantic.proxygenea.ConceptualComparer;
+import fr.lipn.sts.measures.SimilarityMeasure;
+import fr.lipn.sts.semantic.proxygenea.ConceptualSimilarity;
 import fr.lipn.sts.semantic.proxygenea.HyperPath;
 import fr.lipn.sts.semantic.proxygenea.PathNode;
 import fr.lipn.sts.semantic.proxygenea.SynsetPath;
 import fr.lipn.sts.tools.GoogleTFFactory;
 import fr.lipn.sts.tools.WordNet;
 
-public class JWSComparer {
+public class JWSSimilarity implements SimilarityMeasure {
 	
 	public static double compare(ArrayCoreMap tSentence, ArrayCoreMap tSentence1) {
 		HashMap<String, HashSet<HyperPath>> aSenses = new HashMap<String, HashSet<HyperPath>>();
@@ -96,9 +97,8 @@ public class JWSComparer {
 	}
 	
 	private static double compareIC(SynsetPath p1, SynsetPath p2){
-		//TODO: integrate all in Conceptual Comparer?
 		double ret =0d;
-		PathNode lcs = ConceptualComparer.leastCommonSubsumer(p1, p2);
+		PathNode lcs = ConceptualSimilarity.leastCommonSubsumer(p1, p2);
 		if(lcs==null) {
 			if(SemanticComparer.VERBOSE) {
 				System.err.println("LCS error");
@@ -122,5 +122,10 @@ public class JWSComparer {
 		}
 		//System.err.println("JWS score: "+ret);
 		return ret;
+	}
+
+	@Override
+	public double compare(Object o1, Object o2) {
+		return compare((ArrayCoreMap)o1, (ArrayCoreMap)o2);
 	}
 }

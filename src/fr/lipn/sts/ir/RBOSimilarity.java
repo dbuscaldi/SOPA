@@ -19,12 +19,13 @@ import org.apache.lucene.util.Version;
 
 import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.measures.SimilarityMeasure;
 /**
  * This class implements the RBO measure by Webber, Moffat, Zobel (2010) "A similarity measure for indefinite rankings"
  * @author buscaldi
  *
  */
-public class RBOComparer {
+public class RBOSimilarity implements SimilarityMeasure {
 	//private static String index = "/tempo/corpora/AQUAINT_indexed";
 	
 	private final static double p=0.95; //RBO parameter
@@ -119,5 +120,10 @@ public class RBOComparer {
 		}
 		
 		return ret;
+	}
+
+	@Override
+	public double compare(Object o1, Object o2) {
+		return compare((String)o1, (String)o2);
 	}
 }

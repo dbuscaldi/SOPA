@@ -1,9 +1,11 @@
 package fr.lipn.sts.ckpd;
 
 import java.util.HashSet;
-import edu.stanford.nlp.util.ArrayCoreMap;
 
-public class NGramComparer {
+import edu.stanford.nlp.util.ArrayCoreMap;
+import fr.lipn.sts.measures.SimilarityMeasure;
+
+public class NGramSimilarity implements SimilarityMeasure {
 
 	public static double compare(ArrayCoreMap tSentence, ArrayCoreMap tSentence1){
 		HashSet<NGram> set0 = NGramFactory.getNGramSet(tSentence);
@@ -76,5 +78,14 @@ public class NGramComparer {
 	    simValue=ngWSum/longestSent.getWeight();
 	    
 	    return simValue;
+	}
+
+	@Override
+	public double compare(Object o1, Object o2) {
+		if(o1.getClass().equals(String.class)) {
+			return compare((String)o1, (String)o2);
+		} else {
+			return compare((ArrayCoreMap)o1, (ArrayCoreMap)o2);
+		}
 	}
 }

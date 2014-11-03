@@ -16,7 +16,7 @@ import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.SemanticComparer;
 
-public class SpectralComparer {
+public class SpectralDistance {
 	
 	private static Connection c=null;
 	

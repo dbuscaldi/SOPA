@@ -20,8 +20,9 @@ import org.apache.lucene.util.Version;
 
 import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.measures.SimilarityMeasure;
 
-public class IRComparer {
+public class IRSimilarity implements SimilarityMeasure {
 	//private static String index = "/tempo/indexes/AQUAINT_indexed";
 	
 	private final static int K=70;
@@ -110,6 +111,11 @@ public class IRComparer {
 		}
 		
 		return ret;
+	}
+
+	@Override
+	public double compare(Object o1, Object o2) {
+		return compare((String)o1, (String)o2);
 	}
 	
 

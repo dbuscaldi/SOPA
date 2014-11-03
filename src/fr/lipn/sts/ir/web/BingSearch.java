@@ -38,7 +38,7 @@ public class BingSearch {
     while ((inputLine = in.readLine()) != null)
       sb.append(inputLine);
     in.close();
-    
+
     return sb.toString();
   }
 }

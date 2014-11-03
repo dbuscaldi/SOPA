@@ -1,5 +1,7 @@
 package fr.lipn.sts.syntax;
 
+import edu.stanford.nlp.trees.TreeGraphNode;
+
 public class Dependency {
 	String label;
 	DepWord head;
@@ -11,6 +13,12 @@ public class Dependency {
 		this.dependent=new DepWord(dependent);
 	}
 	
+	public Dependency(String shortName, TreeGraphNode gov, TreeGraphNode dep) {
+		this.label=shortName;
+		this.head=new DepWord(gov);
+		this.dependent=new DepWord(dep);
+	}
+
 	public String toString(){
 		return label+"("+head.getWord()+"-"+head.getPOS()+", "+dependent.getWord()+"-"+dependent.getPOS()+")";
 	}

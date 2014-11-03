@@ -4,11 +4,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.measures.SimilarityMeasure;
 
-public class DBPediaComparer {
+public class DBPediaSimilarity implements SimilarityMeasure {
 	static boolean COSINE_SIM=true;
+	static DBPediaChunkBasedAnnotator annotator;
 	
-	public static double compare(String t1, String t2, DBPediaChunkBasedAnnotator annotator) {
+	public static void setAnnotator(DBPediaChunkBasedAnnotator ann) {
+		annotator=ann;
+	}
+	
+	public static double compare(String t1, String t2) {
 		HashMap<String, Float> h1 = new HashMap<String, Float>();
 		HashMap<String, Float> h2 = new HashMap<String, Float>();
 		
@@ -107,4 +113,9 @@ public class DBPediaComparer {
 		else return 0d;
 	}
 */
+
+	@Override
+	public double compare(Object o1, Object o2) {
+		return compare((String)o1, (String)o2);
+	}
 }

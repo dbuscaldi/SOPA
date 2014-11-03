@@ -13,9 +13,10 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
 import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.measures.SimilarityMeasure;
 import fr.lipn.sts.tools.WordNet;
 
-public class GeographicScopeComparer {
+public class GeographicScopeSimilarity implements SimilarityMeasure {
 	private static double NORM_DIST=10000; //assume 10000Km as the maximal distance we can found;  we did this to align with GS scores
 	
 	public static HashSet<String> getLocsforNE(String ne){
@@ -156,5 +157,10 @@ public class GeographicScopeComparer {
 		double geoSim=1-(Math.log(1+avgSumDist)/Math.log(NORM_DIST));
 		
 		return geoSim;
+	}
+
+	@Override
+	public double compare(Object o1, Object o2) {
+		return compare((ArrayCoreMap)o1, (ArrayCoreMap)o2);
 	}
 }

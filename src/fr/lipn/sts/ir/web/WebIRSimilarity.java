@@ -6,7 +6,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-public class WebIRComparer {
+import fr.lipn.sts.measures.SimilarityMeasure;
+
+public class WebIRSimilarity implements SimilarityMeasure {
 	
 	private static Vector<WebSearchResult> getResultList(String req) {
 		Vector<WebSearchResult> resvec = new Vector<WebSearchResult>();
@@ -62,5 +64,10 @@ public class WebIRComparer {
 		}
 			
 		return score;
+	}
+
+	@Override
+	public double compare(Object o1, Object o2) {
+		return compare((String) o1, (String) o2);
 	}
 }

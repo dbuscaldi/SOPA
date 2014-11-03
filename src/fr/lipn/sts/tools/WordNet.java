@@ -22,6 +22,7 @@ import edu.mit.jwi.item.POS;
 import edu.mit.jwi.item.Pointer;
 import edu.mit.jwi.item.SynsetID;
 import edu.mit.jwi.morph.WordnetStemmer;
+import fr.lipn.sts.SOPAConfiguration;
 
 public class WordNet {
 	public static IDictionary dict;
@@ -32,6 +33,7 @@ public class WordNet {
 	private static double maxIC=0d;
 	
 	public static void init(){
+		wnhome=SOPAConfiguration.WN_HOME;
 		String path = wnhome + File.separator + "dict";
 		URL url;
 		try {
@@ -143,7 +145,7 @@ public class WordNet {
 		else if(pos.startsWith("J")) cpos = POS.ADJECTIVE;
 		else if(pos.startsWith("R")) cpos = POS.ADVERB;
 		else return synsets; //don't deal with other stuff
-		text=text.toLowerCase(); //FIXME: check that is ok
+		text=text.toLowerCase();
 		try {
 			List<String> stems = stemmer.findStems(text, cpos);
 			IIndexWord idxWord = null;

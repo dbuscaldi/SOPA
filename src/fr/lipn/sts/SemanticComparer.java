@@ -17,19 +17,19 @@ import edu.stanford.nlp.util.ArrayCoreMap;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import fr.lipn.sts.basic.Levenshtein;
-import fr.lipn.sts.basic.TfIdfComparer;
-import fr.lipn.sts.ckpd.NGramComparer;
+import fr.lipn.sts.basic.TfIdfSimilarity;
+import fr.lipn.sts.ckpd.NGramSimilarity;
 import fr.lipn.sts.geo.BlueMarble;
-import fr.lipn.sts.geo.GeographicScopeComparer;
-import fr.lipn.sts.ir.IRComparer;
-import fr.lipn.sts.ir.RBOComparer;
+import fr.lipn.sts.geo.GeographicScopeSimilarity;
+import fr.lipn.sts.ir.IRSimilarity;
+import fr.lipn.sts.ir.RBOSimilarity;
 import fr.lipn.sts.ner.DBPediaChunkBasedAnnotator;
-import fr.lipn.sts.ner.DBPediaComparer;
-import fr.lipn.sts.ner.NERComparer;
-import fr.lipn.sts.semantic.JWSComparer;
-import fr.lipn.sts.semantic.SpectralComparer;
-import fr.lipn.sts.semantic.proxygenea.ConceptualComparer;
-import fr.lipn.sts.syntax.DepComparer;
+import fr.lipn.sts.ner.DBPediaSimilarity;
+import fr.lipn.sts.ner.NERSimilarity;
+import fr.lipn.sts.semantic.JWSSimilarity;
+import fr.lipn.sts.semantic.SpectralDistance;
+import fr.lipn.sts.semantic.proxygenea.ConceptualSimilarity;
+import fr.lipn.sts.syntax.DepBasedSimilarity;
 import fr.lipn.sts.tools.GoogleTFFactory;
 import fr.lipn.sts.tools.WordNet;
 import fr.lipn.sts.twitter.TwitterComparer;
@@ -130,8 +130,6 @@ public class SemanticComparer {
 	    WordNet.init(SOPAConfiguration.WN_HOME);
 	    BlueMarble.init();
 	    
-	    //DBPediaChunkBasedAnnotator chunkannotator = new DBPediaChunkBasedAnnotator(SOPAConfiguration.DBPedia_INDEX);
-	    
 	    Vector<String> gsLabels = new Vector<String>();
 	    if(TRAIN_MODE){
 	    	BufferedReader gsReader = new BufferedReader(new FileReader(gsFile));
@@ -166,24 +164,21 @@ public class SemanticComparer {
 	    	
 	    	ArrayCoreMap sent0 = (ArrayCoreMap) ann0.get(CoreAnnotations.SentencesAnnotation.class).get(0);
 	    	ArrayCoreMap sent1 = (ArrayCoreMap) ann1.get(CoreAnnotations.SentencesAnnotation.class).get(0);
-		    
-		    //double DBPsim=DBPediaComparer.compare(sentences[0], sentences[1], chunkannotator); //TODO: fix chunkannotator
-		    double NERsim=NERComparer.compare(sent0, sent1);
-		    double sim=NGramComparer.compare(sent0, sent1);
-		    double conceptsim=ConceptualComparer.compare(sent0, sent1);
-		    double wnsim=JWSComparer.compare(sent0, sent1);
-		    double depsim = DepComparer.compare(sent0, sent1);
+	    	
+	    	//DBPediaChunkBasedAnnotator chunkannotator = new DBPediaChunkBasedAnnotator(SOPAConfiguration.DBPedia_INDEX);
+	    	//DBPediaSimilarity.setAnnotator(chunkannotator);
+		    //double DBPsim=DBPediaSimilarity.compare(sentences[0], sentences[1]); //TODO: fix chunkannotator
+		    double NERsim=NERSimilarity.compare(sent0, sent1);
+		    double sim=NGramSimilarity.compare(sent0, sent1);
+		    double conceptsim=ConceptualSimilarity.compare(sent0, sent1);
+		    double wnsim=JWSSimilarity.compare(sent0, sent1);
+		    double depsim = DepBasedSimilarity.compare(sent0, sent1);
 		    double editsim = Levenshtein.characterBasedSimilarity(sentences[0], sentences[1]);
-		    double IRsim = IRComparer.compare(sentences[0], sentences[1]);
-		    //double RBOsim = RBOComparer.compare(sentences[0], sentences[1]); //RBO measure for IR comparison
-		    double cosinesim = TfIdfComparer.compare(sent0, sent1);
-		    double geosim = GeographicScopeComparer.compare(sent0, sent1);
-		    double spectsim = SpectralComparer.compare(sent0, sent1);
-		    
-		    /*
-		    TwitterComparer.init();
-		    TwitterComparer.compare(sentences[0], sentences[1], chunkannotator);
-		    */
+		    double IRsim = IRSimilarity.compare(sentences[0], sentences[1]);
+		    //double RBOsim = RBOSimilarity.compare(sentences[0], sentences[1]); //RBO measure for IR comparison
+		    double cosinesim = TfIdfSimilarity.compare(sent0, sent1);
+		    double geosim = GeographicScopeSimilarity.compare(sent0, sent1);
+		    //double spectsim = SpectralSimilarity.compare(sent0, sent1);
 		    
 		    //sentence lengths
 		    /*double t0 = Math.log(sentences[0].length());

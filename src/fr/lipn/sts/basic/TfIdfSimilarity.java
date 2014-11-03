@@ -1,16 +1,15 @@
 package fr.lipn.sts.basic;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.util.ArrayCoreMap;
+import fr.lipn.sts.measures.SimilarityMeasure;
 import fr.lipn.sts.tools.GoogleTFFactory;
 
-public class TfIdfComparer {
+public class TfIdfSimilarity implements SimilarityMeasure {
 
 	public static double compare(ArrayCoreMap tSentence, ArrayCoreMap tSentence1){
 		HashMap<String, Integer> freqs1 = new HashMap<String, Integer>();
@@ -137,5 +136,14 @@ public class TfIdfComparer {
 		double den = Math.sqrt(d1)*Math.sqrt(d2);
 		
 		return (num/den);
+	}
+
+	@Override
+	public double compare(Object o1, Object o2) {
+		if(o1.getClass().equals(String.class)) {
+			return compare((String)o1, (String)o2);
+		} else {
+			return compare((ArrayCoreMap)o1, (ArrayCoreMap)o2);
+		}
 	}
 }
