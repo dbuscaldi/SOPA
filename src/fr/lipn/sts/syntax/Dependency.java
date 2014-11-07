@@ -19,6 +19,12 @@ public class Dependency {
 		this.dependent=new DepWord(dep);
 	}
 
+	public Dependency(String gov, String dep) {
+		this.label="u";
+		this.head=new DepWord(gov);
+		this.dependent=new DepWord(dep);
+	}
+
 	public String toString(){
 		return label+"("+head.getWord()+"-"+head.getPOS()+", "+dependent.getWord()+"-"+dependent.getPOS()+")";
 	}

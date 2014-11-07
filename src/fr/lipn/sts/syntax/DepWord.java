@@ -9,13 +9,12 @@ public class DepWord {
 	private String POS;
 	
 	/**
-	 * Joseph-based DepWord constructor
+	 * String-based DepWord constructor
 	 * @param seq
 	 */
 	public DepWord(String seq){
 		
 		String [] items = seq.split("-");
-		
 		try{
 			this.word=items[0];
 			this.position=Integer.parseInt(items[1]);
@@ -31,8 +30,8 @@ public class DepWord {
 			}
 			this.word=tmpWord.toString();
 		}
+		
 		if(this.word.equals("ROOT")) POS="NN";
-		else POS=null;
 		
 		//if(this.word.equals("") || this.word==null) System.err.println("error-seq: "+seq);
 		

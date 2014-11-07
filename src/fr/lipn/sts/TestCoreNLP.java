@@ -70,7 +70,7 @@ public class TestCoreNLP {
     	//double websim = WebIRSimilarity.compare(text1, text2);
     	double conceptsim=ConceptualSimilarity.compare(sent0, sent1);
 	    double wnsim=JWSSimilarity.compare(sent0, sent1);
-	    //double depsim = DepBasedSimilarity.compare(sent0, sent1);
+	    double depsim = DepBasedSimilarity.compare(sent0, sent1);
 	    double editsim = Levenshtein.characterBasedSimilarity(text1, text2);
 	    double editsim1 = Levenshtein.wordBasedSimilarity(text1, text2);
 	    double IRsim = IRSimilarity.compare(text1, text2);
@@ -86,7 +86,7 @@ public class TestCoreNLP {
     	//System.err.println("Websim: "+websim);
     	System.err.println("Conceptual Similarity: "+conceptsim);
     	System.err.println("WN sim (Mihalcea): "+wnsim);
-    	//System.err.println("Syntactic Dependences similarity: "+depsim);
+    	System.err.println("Syntactic Dependences similarity: "+depsim);
     	System.err.println("Edit distance similarity(chars): "+editsim);
     	System.err.println("Edit distance similarity(words): "+editsim1);
     	System.err.println("IR similarity: "+IRsim);
