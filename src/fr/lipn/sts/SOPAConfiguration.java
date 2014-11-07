@@ -17,7 +17,6 @@ public class SOPAConfiguration {
 	public final static int JIANG_CONRATH=5;
 	
 	public static String LANG;
-	public static String BN_HOME;
 	public static String WN_HOME;
 	public static String DBPedia_INDEX;
 	public static String IR_INDEX;
@@ -27,14 +26,18 @@ public class SOPAConfiguration {
 	public static int STRUCTURAL_MEASURE=PROXYGENEA3;
 	public static int IC_MEASURE=JIANG_CONRATH; //measure used for IC-weighted comparison (Lin or Jiang-Conrath)
 	
-	public static void load() {
+	/**
+	 * Loads configuration from a given configuration file
+	 * @param configuration_file
+	 */
+	public static void load(String configuration_file) {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		dbf.setIgnoringComments(true);
 		dbf.setIgnoringElementContentWhitespace(true);
 		dbf.setNamespaceAware(true);
 		try {
 			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document dom = db.parse("res/config.xml");
+			Document dom = db.parse(configuration_file);
 			
 			Element rootEle = dom.getDocumentElement();
 			NodeList nl = rootEle.getChildNodes();
@@ -50,9 +53,6 @@ public class SOPAConfiguration {
 						}
 						if(el.getNodeName().equals("wnhome")){
 							WN_HOME=el.getTextContent();
-						}
-						if(el.getNodeName().equals("bnhome")){
-							BN_HOME=el.getTextContent();
 						}
 						if(el.getNodeName().equals("DBPedia")){
 							if(el.getAttribute("lang").equals(LANG)) {
@@ -93,7 +93,13 @@ public class SOPAConfiguration {
 		}catch(Exception pce) {
 			pce.printStackTrace();
 		}
-		
+	}
+	
+	/**
+	 * Loads configuration from the standard configuration file res/config.xml
+	 */
+	public static void load() {
+		load("res/config.xml");
 	}
 	
 }

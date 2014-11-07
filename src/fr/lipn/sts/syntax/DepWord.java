@@ -38,6 +38,10 @@ public class DepWord {
 		
 	}
 	
+	/**
+	 * Stanford-based constructor
+	 * @param n
+	 */
 	public DepWord(TreeGraphNode n) {
 		this.word=n.nodeString();
 		this.position=0;

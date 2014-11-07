@@ -200,7 +200,7 @@ public class SemanticComparer {
 			    System.err.println("NER overlap : "+5.0 *NERsim);
 			    System.err.println("IR-based similarity : "+5.0 *IRsim);
 			    //System.err.println("DBPedia similarity : "+5.0 *DBPsim);
-			    System.err.println("Spectral distance (the smaller better): "+spectsim);
+			    //System.err.println("Spectral distance (the smaller better): "+spectsim);
 			    System.err.println("--------------");
 			    
 		    } else {

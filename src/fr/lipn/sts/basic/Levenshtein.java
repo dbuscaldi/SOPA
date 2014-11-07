@@ -66,7 +66,7 @@ public class Levenshtein {
                                         distance[i - 1][j] + 1,
                                         distance[i][j - 1] + 1,
                                         distance[i - 1][j - 1]
-                                                        + ((s1[i - 1] == s2[j - 1]) ? 0
+                                                        + ((s1[i - 1].equals(s2[j - 1])) ? 0
                                                                         : 1));
 
         return distance[s1.length][s2.length];

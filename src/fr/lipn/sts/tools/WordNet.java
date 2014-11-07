@@ -11,6 +11,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.es.SpanishAnalyzer;
+import org.apache.lucene.analysis.fr.FrenchAnalyzer;
+import org.apache.lucene.analysis.it.ItalianAnalyzer;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
+
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;
@@ -23,6 +40,7 @@ import edu.mit.jwi.item.Pointer;
 import edu.mit.jwi.item.SynsetID;
 import edu.mit.jwi.morph.WordnetStemmer;
 import fr.lipn.sts.SOPAConfiguration;
+import fr.lipn.sts.SemanticComparer;
 
 public class WordNet {
 	public static IDictionary dict;
@@ -98,6 +116,7 @@ public class WordNet {
 	 * @return
 	 */
 	public static HashSet<ISynsetID> getSynsets(String text, String pos){
+		if(!SOPAConfiguration.LANG.equals("en")) return getSynsets(SOPAConfiguration.LANG, text, pos);
 		HashSet<ISynsetID> synsets = new HashSet<ISynsetID>();
 		POS cpos;
 		if(pos.startsWith("N")) cpos = POS.NOUN;
@@ -132,12 +151,13 @@ public class WordNet {
 	}
 	
 	/**
-	 * returns all noun synsets corresponding to a given word (if  
+	 * returns all noun synsets corresponding to a given word
 	 * @param text
 	 * @param pos
 	 * @return
 	 */
 	public static HashSet<ISynsetID> getNounSynsets(String text, String pos){
+		if(!SOPAConfiguration.LANG.equals("en")) return getNounSynsets(SOPAConfiguration.LANG, text, pos);
 		HashSet<ISynsetID> synsets = new HashSet<ISynsetID>();
 		POS cpos;
 		if(pos.startsWith("N")) cpos = POS.NOUN;
@@ -182,11 +202,7 @@ public class WordNet {
 		
 		return synsets;
 	}
-	/*
-	public static boolean areComparable(IIndexWord a, IIndexWord b){
-		
-	}*/
-	
+
 	/**
 	 * returns all hypernym paths from a given synset
 	 * @param syn
@@ -278,6 +294,20 @@ public class WordNet {
 		buf.append(")");
 		return buf.toString();
 	}
+	
+	public static ISynsetID getSynsetFromOffsetPOS(String off, String pos){
+		POS cpos;
+		pos=pos.toUpperCase();
+		if(pos.startsWith("N")) cpos = POS.NOUN;
+		else if(pos.startsWith("V")) cpos = POS.VERB;
+		else if(pos.startsWith("A")) cpos = POS.ADJECTIVE;
+		else if(pos.startsWith("R")) cpos = POS.ADVERB;
+		else return null;
+		
+		ISynsetID isyn = new SynsetID(Integer.parseInt(off), cpos); 
+		return isyn;
+	}
+	
 	/**
 	 * returns the current WordNet home directory
 	 * @return
@@ -298,5 +328,148 @@ public class WordNet {
 	
 	public static double getMaxIC(){
 		return maxIC;
+	}
+	
+	/**
+	 * Method used to access the WordNets in languages different from English
+	 * @param lang
+	 * @param text
+	 * @param pos
+	 * @return
+	 */
+	private static HashSet<ISynsetID> getNounSynsets(String lang, String text, String pos) {
+		HashSet<ISynsetID> synsets = new HashSet<ISynsetID>();
+		
+		String file_index;
+		if(lang.equals("es")) file_index="res/OMWN/wnindex_ES";
+		else if(lang.equals("it")) file_index="res/OMWN/wnindex_IT";
+		else file_index="res/OMWN/wnindex_FR";
+		
+		try {
+			POS cpos;
+			pos=pos.toUpperCase();
+			String norm_pos;
+			if(pos.startsWith("N")) {
+				cpos = POS.NOUN;
+				norm_pos="n";
+			} else if(pos.startsWith("V")) {
+				cpos = POS.VERB;
+				norm_pos="v";
+			}else if(pos.startsWith("J")) {
+				cpos = POS.ADJECTIVE;
+				norm_pos="a";
+			} else if(pos.startsWith("R")) {
+				cpos = POS.ADVERB;
+				norm_pos="r";
+			} else return synsets;
+			
+			IndexReader reader = IndexReader.open(FSDirectory.open(new File(file_index)));
+			IndexSearcher searcher = new IndexSearcher(reader);
+			searcher.setSimilarity(new BM25Similarity());
+			Analyzer analyzer;
+			if(lang.equals("ES")) analyzer = new SpanishAnalyzer(Version.LUCENE_44);
+		    else if(lang.equals("IT")) analyzer = new ItalianAnalyzer(Version.LUCENE_44);
+		    else analyzer = new FrenchAnalyzer(Version.LUCENE_44);
+			
+			QueryParser parser = new QueryParser(Version.LUCENE_44, "lemmas", analyzer);
+			Query query = parser.parse(text);
+			
+			TopDocs results = searcher.search(query, 100);
+			ScoreDoc[] hits = results.scoreDocs;
+			
+		    int n = results.totalHits;
+		    
+		    for (int i = 0; i < n; i++) {
+		    	Document doc = searcher.doc(hits[i].doc);
+			    String offset = doc.get("offset");
+			    //System.err.println(offset+" -> "+doc.get("lemmas"));
+			    if (offset.endsWith(norm_pos)) {
+			    	String off = offset.replace(norm_pos, "");
+			    	ISynsetID isid = getSynsetFromOffsetPOS(off, pos);
+			    	if(isid !=null) {
+			    		if(cpos==POS.NOUN) synsets.add(isid);
+			    		else {
+					    	ISynset syn = dict.getSynset(isid);
+					    	List<IWord> syn_words = syn.getWords();
+					    	for(IWord wd : syn_words) {
+					    		List<IWordID> related = wd.getRelatedWords(Pointer.DERIVATIONALLY_RELATED);
+					    		for(IWordID rel: related) {
+									if(rel.getPOS()==POS.NOUN) {
+										ISynsetID irelsyn=rel.getSynsetID();
+										synsets.add(irelsyn);
+									}
+								}
+					    	}
+			    		}
+			    	}
+			    }
+			}
+		    reader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return synsets;
+	}
+	/**
+	 * Method used to access the WordNets in languages different from English
+	 * @param lang
+	 * @param text
+	 * @param pos
+	 * @return
+	 */
+	private static HashSet<ISynsetID> getSynsets(String lang, String text, String pos){
+		HashSet<ISynsetID> synsets = new HashSet<ISynsetID>();
+		
+		String file_index;
+		if(lang.equals("es")) file_index="res/OMWN/wnindex_ES";
+		else if(lang.equals("it")) file_index="res/OMWN/wnindex_IT";
+		else file_index="res/OMWN/wnindex_FR";
+		
+		try {
+			String norm_pos;
+			pos=pos.toUpperCase();
+			if(pos.startsWith("N")) {
+				norm_pos="n";
+			} else if(pos.startsWith("V")) {
+				norm_pos="v";
+			}else if(pos.startsWith("J")) {
+				norm_pos="a";
+			} else if(pos.startsWith("R")) {
+				norm_pos="r";
+			} else return synsets;
+			
+			IndexReader reader = IndexReader.open(FSDirectory.open(new File(file_index)));
+			IndexSearcher searcher = new IndexSearcher(reader);
+			searcher.setSimilarity(new BM25Similarity());
+			Analyzer analyzer;
+			if(lang.equals("ES")) analyzer = new SpanishAnalyzer(Version.LUCENE_44);
+		    else if(lang.equals("IT")) analyzer = new ItalianAnalyzer(Version.LUCENE_44);
+		    else analyzer = new FrenchAnalyzer(Version.LUCENE_44);
+			
+			QueryParser parser = new QueryParser(Version.LUCENE_44, "lemmas", analyzer);
+			Query query = parser.parse(text);
+			
+			TopDocs results = searcher.search(query, 100);
+			ScoreDoc[] hits = results.scoreDocs;
+			
+		    int n = results.totalHits;
+		    
+		    for (int i = 0; i < n; i++) {
+		    	Document doc = searcher.doc(hits[i].doc);
+			    String offset = doc.get("offset");
+			    //System.err.println(offset+" -> "+doc.get("lemmas"));
+			    if (offset.endsWith(norm_pos)) {
+			    	String off = offset.replace(norm_pos, "");
+			    	ISynsetID isid = getSynsetFromOffsetPOS(off, norm_pos);
+			    	if(isid !=null) synsets.add(isid);
+			    }
+			}
+		    reader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return synsets;
 	}
 }
