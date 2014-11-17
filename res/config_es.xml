@@ -1,8 +1,9 @@
 <config>
-	<lang>en</lang> <!-- language -->
+	<lang>es</lang> <!-- language -->
 	<wnhome>/tempo/shared/WordNet-3.0/</wnhome> <!-- location of WordNet -->
 	<DBPedia lang="en">/tempo/indexes/DBPedia_indexed</DBPedia> <!-- location of DBpedia index -->
-	<IRindex lang="en">/media/expT1/index/ukwac</IRindex> <!-- location of IR index -->
+	<IRindex lang="en">/tempo/indexes/AQUAINT_indexed</IRindex> <!-- location of IR index -->
+	<IRindex lang="es">/tempo/indexes/EFE_UN_indexed</IRindex> <!-- location of IR index (Spanish) -->
 	<Ngrams lang="en">/tempo/indexes/googleNgramsEN.db</Ngrams> <!-- location of SQLITE3 database of Google bigrams and trigrams -->
 	<GoogleTF>/tempo/corpora/GoogleW1T/vocab/vocab</GoogleTF> <!-- location of list of Google unigrams -->
 	<ssim>pg1</ssim> <!-- Structural similarity measure: pg1, pg2, pg3, wp -->

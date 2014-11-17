@@ -36,8 +36,6 @@ import fr.lipn.sts.twitter.TwitterComparer;
 
 public class SemanticComparer {
 	public static boolean TRAIN_MODE=false;
-	public static boolean VERBOSE=false;
-	
 	/**
 	 * @param args
 	 * @throws IOException 
@@ -101,7 +99,7 @@ public class SemanticComparer {
         
         String inputfile=config.getString("inputFile"); //"Z:/SemEval/train/STS.input.MSRvid.txt";
         
-        VERBOSE=config.getBoolean("verbose");
+        SOPAConfiguration.VERBOSE=config.getBoolean("verbose");
         
         String gsFile = config.getString("gsFile");
         if(gsFile != null) TRAIN_MODE=true;
@@ -184,7 +182,7 @@ public class SemanticComparer {
 		    /*double t0 = Math.log(sentences[0].length());
 		    double t1 = Math.log(sentences[1].length());
 		    */
-		    if(VERBOSE) {
+		    if(SOPAConfiguration.VERBOSE) {
 		    	System.err.println("Pair # "+(i+1));
 		    	System.err.println(sentences[0]);
 			    System.err.println(sentences[1]);

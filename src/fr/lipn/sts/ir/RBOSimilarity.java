@@ -18,7 +18,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 import fr.lipn.sts.SOPAConfiguration;
-import fr.lipn.sts.SemanticComparer;
 import fr.lipn.sts.measures.SimilarityMeasure;
 /**
  * This class implements the RBO measure by Webber, Moffat, Zobel (2010) "A similarity measure for indefinite rankings"
@@ -29,7 +28,7 @@ public class RBOSimilarity implements SimilarityMeasure {
 	//private static String index = "/tempo/corpora/AQUAINT_indexed";
 	
 	private final static double p=0.95; //RBO parameter
-	private final static int MAXHITS=100;
+	private final static int MAXHITS=200;
 	
 	public static double compare(String req1, String req2){
 		double ret = 0d;
@@ -48,7 +47,7 @@ public class RBOSimilarity implements SimilarityMeasure {
 			Query query1 = parser.parse(req1.trim());
 			Query query2 = parser.parse(req2.trim());
 			
-			if(SemanticComparer.VERBOSE) System.err.println("searching queries (RBO):\nQ1: "+query1.toString()+"\nQ2: "+query2.toString());
+			if(SOPAConfiguration.VERBOSE) System.err.println("searching queries (RBO):\nQ1: "+query1.toString()+"\nQ2: "+query2.toString());
 			
 			TopDocs results1 = searcher.search(query1, MAXHITS);
 			ScoreDoc[] hits1 = results1.scoreDocs;

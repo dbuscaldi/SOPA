@@ -19,7 +19,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 import fr.lipn.sts.SOPAConfiguration;
-import fr.lipn.sts.SemanticComparer;
 import fr.lipn.sts.measures.SimilarityMeasure;
 
 public class IRSimilarity implements SimilarityMeasure {
@@ -44,7 +43,7 @@ public class IRSimilarity implements SimilarityMeasure {
 			Query query1 = parser.parse(req1.trim());
 			Query query2 = parser.parse(req2.trim());
 			
-			if(SemanticComparer.VERBOSE) System.err.println("searching queries:\nQ1: "+query1.toString()+"\nQ2: "+query2.toString());
+			if(SOPAConfiguration.VERBOSE) System.err.println("searching queries:\nQ1: "+query1.toString()+"\nQ2: "+query2.toString());
 			
 			TopDocs results1 = searcher.search(query1, 100);
 			ScoreDoc[] hits1 = results1.scoreDocs;
@@ -66,7 +65,7 @@ public class IRSimilarity implements SimilarityMeasure {
 			        String id = doc.get("id");
 			        Double score = new Double(hits1[i].score);
 			        m1.put(id, score);
-			        //if(SemanticComparer.VERBOSE) System.err.println("req1 doc: "+id+" : "+score);
+			        //if(SOPAConfiguration.VERBOSE) System.err.println("req1 doc: "+id+" : "+score);
 		    	}
 		    	
 		    	for (int i = 0; i < Math.min(K, n_2); i++) {
@@ -74,7 +73,7 @@ public class IRSimilarity implements SimilarityMeasure {
 			        String id = doc.get("id");
 			        Double score = new Double(hits2[i].score);
 			        m2.put(id, score);
-			        //if(SemanticComparer.VERBOSE) System.err.println("req2 doc: "+id+" : "+score);
+			        //if(SOPAConfiguration.VERBOSE) System.err.println("req2 doc: "+id+" : "+score);
 		    	}
 		    	
 		    	HashSet<String> uniqueIDs = new HashSet<String>();
@@ -97,7 +96,7 @@ public class IRSimilarity implements SimilarityMeasure {
 		    		if(v2==null) s2=0d;
 		    		else s2=v2.doubleValue();
 		    		
-		    		if(SemanticComparer.VERBOSE) System.err.println("common doc: "+key+" s1: "+s1+" s2: "+s2);
+		    		if(SOPAConfiguration.VERBOSE) System.err.println("common doc: "+key+" s1: "+s1+" s2: "+s2);
 		    		
 		    		sum+=(Math.sqrt(Math.pow((s1-s2), 2)))/Math.max(s1, s2);
 		    	}

@@ -7,7 +7,7 @@ import java.util.Set;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.util.ArrayCoreMap;
-import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.measures.SimilarityMeasure;
 import fr.lipn.sts.tools.GoogleTFFactory;
 
@@ -61,7 +61,7 @@ public class NERSimilarity implements SimilarityMeasure {
 				weighted_overlap+=GoogleTFFactory.getIDF(s);
 			}
 			
-			if(SemanticComparer.VERBOSE) System.err.println("Shared NERs for category "+k+" : "+shVals.size());
+			if(SOPAConfiguration.VERBOSE) System.err.println("Shared NERs for category "+k+" : "+shVals.size());
 		}
 		
 		/* returns a weighted (idf) Dice coefficient as similarity between the two sets of NEs */

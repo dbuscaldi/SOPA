@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import edu.stanford.nlp.ling.TaggedWord;
-import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.basic.Levenshtein;
 import fr.lipn.sts.semantic.proxygenea.ConceptualSimilarity;
 import fr.lipn.sts.tools.GoogleTFFactory;
@@ -176,18 +176,18 @@ public class DepPair {
 		double N2 = (double) d2.size();
 		
 		for(Dependency k : alMapD1.keySet()){
-			if(SemanticComparer.VERBOSE) System.err.println("S1 Alignment: "+k.toString()+" <-> "+alMapD1.get(k).getDependency().toString()+" score: "+alMapD1.get(k).getScoreValue());
+			if(SOPAConfiguration.VERBOSE) System.err.println("S1 Alignment: "+k.toString()+" <-> "+alMapD1.get(k).getDependency().toString()+" score: "+alMapD1.get(k).getScoreValue());
 			sum1+=alMapD1.get(k).getScoreValue();
 		}
 		double score_1=sum1/N1;
-		if(SemanticComparer.VERBOSE) System.err.println("S1 Score: "+score_1+"\t(N:"+N1+")");
+		if(SOPAConfiguration.VERBOSE) System.err.println("S1 Score: "+score_1+"\t(N:"+N1+")");
 		
 		for(Dependency u : alMapD2.keySet()){
-			if(SemanticComparer.VERBOSE) System.err.println("S2 Alignment: "+u.toString()+" <-> "+alMapD2.get(u).getDependency().toString()+" score: "+alMapD2.get(u).getScoreValue());
+			if(SOPAConfiguration.VERBOSE) System.err.println("S2 Alignment: "+u.toString()+" <-> "+alMapD2.get(u).getDependency().toString()+" score: "+alMapD2.get(u).getScoreValue());
 			sum2+=alMapD2.get(u).getScoreValue();
 		}
 		double score_2=sum2/N2;
-		if(SemanticComparer.VERBOSE) System.err.println("S2 Score: "+score_2+"\t(N:"+N2+")");
+		if(SOPAConfiguration.VERBOSE) System.err.println("S2 Score: "+score_2+"\t(N:"+N2+")");
 		
 		return Math.max(score_1, score_2);
 	}

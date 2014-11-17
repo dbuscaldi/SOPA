@@ -101,5 +101,7 @@ public class SOPAConfiguration {
 	public static void load() {
 		load("res/config.xml");
 	}
+
+	public static boolean VERBOSE=false;
 	
 }

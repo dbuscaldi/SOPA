@@ -10,7 +10,6 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.SOPAConfiguration;
-import fr.lipn.sts.SemanticComparer;
 import fr.lipn.sts.measures.SimilarityMeasure;
 import fr.lipn.sts.semantic.proxygenea.ConceptualSimilarity;
 import fr.lipn.sts.semantic.proxygenea.HyperPath;
@@ -53,7 +52,7 @@ public class JWSSimilarity implements SimilarityMeasure {
 		double m1Sim = maxSim(aSenses, bSenses);
 		double m2Sim = maxSim(bSenses, aSenses);
 		
-		if(SemanticComparer.VERBOSE) System.err.println("JWS weight: "+(0.5d * (m1Sim+m2Sim)));
+		if(SOPAConfiguration.VERBOSE) System.err.println("JWS weight: "+(0.5d * (m1Sim+m2Sim)));
 		
 		return 0.5d * (m1Sim+m2Sim);
 	}
@@ -86,7 +85,7 @@ public class JWSSimilarity implements SimilarityMeasure {
 			sumWeight+=maxSim*w_idf; //Mihalcea et al.
 			den+=w_idf;
 			if(maxSim > 0) {
-				if(SemanticComparer.VERBOSE) System.err.println("JWS: best weight for "+w+" : "+maxSim+" <-> ("+targetSim+")");
+				if(SOPAConfiguration.VERBOSE) System.err.println("JWS: best weight for "+w+" : "+maxSim+" <-> ("+targetSim+")");
 			}
 		}
 		//Mihalcea et al.
@@ -100,7 +99,7 @@ public class JWSSimilarity implements SimilarityMeasure {
 		double ret =0d;
 		PathNode lcs = ConceptualSimilarity.leastCommonSubsumer(p1, p2);
 		if(lcs==null) {
-			if(SemanticComparer.VERBOSE) {
+			if(SOPAConfiguration.VERBOSE) {
 				System.err.println("LCS error");
 				p1.print(System.err);
 				p2.print(System.err);

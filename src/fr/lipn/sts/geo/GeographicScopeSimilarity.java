@@ -12,7 +12,7 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations.AnswerAnnotation;
 import edu.stanford.nlp.util.ArrayCoreMap;
-import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.measures.SimilarityMeasure;
 import fr.lipn.sts.tools.WordNet;
 
@@ -96,7 +96,7 @@ public class GeographicScopeSimilarity implements SimilarityMeasure {
 			} else {
 				if(in==true) {
 					off1.addAll(getLocsforNE(buf.toString().trim()));
-					if(SemanticComparer.VERBOSE) System.err.println("got geoinfo for leader "+buf);
+					if(SOPAConfiguration.VERBOSE) System.err.println("got geoinfo for leader "+buf);
 					buf.delete(0, buf.length());
 				}
 				in=false;
@@ -114,7 +114,7 @@ public class GeographicScopeSimilarity implements SimilarityMeasure {
 			} else {
 				if(in==true) {
 					off2.addAll(getLocsforNE(buf.toString().trim()));
-					if(SemanticComparer.VERBOSE) System.err.println("got geoinfo for leader "+buf);
+					if(SOPAConfiguration.VERBOSE) System.err.println("got geoinfo for leader "+buf);
 					buf.delete(0, buf.length());
 				}
 				in=false;

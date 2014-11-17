@@ -14,7 +14,6 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.SOPAConfiguration;
-import fr.lipn.sts.SemanticComparer;
 
 public class SpectralDistance {
 	
@@ -169,7 +168,7 @@ public class SpectralDistance {
 							
 						}
 					}
-					if(SemanticComparer.VERBOSE) System.err.println("[Spectral] Best alignment for "+tw.word()+" : "+bestMatch+" ,score: "+minDist);
+					if(SOPAConfiguration.VERBOSE) System.err.println("[Spectral] Best alignment for "+tw.word()+" : "+bestMatch+" ,score: "+minDist);
 					sumDist+=minDist;
 					ncomp++;
 				}

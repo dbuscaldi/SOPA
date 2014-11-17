@@ -11,7 +11,6 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.SOPAConfiguration;
-import fr.lipn.sts.SemanticComparer;
 import fr.lipn.sts.basic.Levenshtein;
 import fr.lipn.sts.measures.SimilarityMeasure;
 import fr.lipn.sts.syntax.DepWord;
@@ -72,7 +71,7 @@ public class ConceptualSimilarity implements SimilarityMeasure {
 			
 			sumWeight+=maxSim;
 			if(maxSim > 0) {
-				if(SemanticComparer.VERBOSE) System.err.println("best weight for "+w+" : "+maxSim+" <-> ("+targetSim+")");
+				if(SOPAConfiguration.VERBOSE) System.err.println("best weight for "+w+" : "+maxSim+" <-> ("+targetSim+")");
 					cnt++;
 			}
 		}
@@ -138,7 +137,7 @@ public class ConceptualSimilarity implements SimilarityMeasure {
 			
 			sumWeight+=maxSim;
 			if(maxSim > 0) {
-				if(SemanticComparer.VERBOSE) System.err.println("best holonym weight for "+w+" : "+maxSim+" <-> ("+targetSim+")");
+				if(SOPAConfiguration.VERBOSE) System.err.println("best holonym weight for "+w+" : "+maxSim+" <-> ("+targetSim+")");
 					cnt++;
 			}
 		}
@@ -221,7 +220,7 @@ public class ConceptualSimilarity implements SimilarityMeasure {
 		float ret =0f;
 		PathNode lcs = leastCommonSubsumer(p1, p2);
 		if(lcs==null) {
-			if(SemanticComparer.VERBOSE) {
+			if(SOPAConfiguration.VERBOSE) {
 				System.err.println("LCS error");
 				p1.print(System.err);
 				p2.print(System.err);

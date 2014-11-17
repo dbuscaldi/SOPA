@@ -3,7 +3,7 @@ package fr.lipn.sts.ner;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import fr.lipn.sts.SemanticComparer;
+import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.measures.SimilarityMeasure;
 
 public class DBPediaSimilarity implements SimilarityMeasure {
@@ -28,7 +28,7 @@ public class DBPediaSimilarity implements SimilarityMeasure {
 		
 		if (shared.size()==0) return 0d;
 		
-		if(SemanticComparer.VERBOSE) {
+		if(SOPAConfiguration.VERBOSE) {
 			System.err.println("Shared DBPedia entities : ");
 			for(String e : shared) {
 				System.err.println(e);
