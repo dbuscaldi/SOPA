@@ -7,6 +7,7 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.align.sphynx.SphynxSimilarity;
+import fr.lipn.sts.align.sultan.SultanSimilarity;
 import fr.lipn.sts.basic.Levenshtein;
 import fr.lipn.sts.basic.TfIdfSimilarity;
 import fr.lipn.sts.ckpd.NGramSimilarity;
@@ -81,6 +82,7 @@ public class TestCoreNLP {
 	    double editsim1 = Levenshtein.wordBasedSimilarity(text1, text2);
 	    double IRsim = IRSimilarity.compare(text1, text2);
 	    double sphynxsim = SphynxSimilarity.compare(sent0,sent1);
+	    double sultansim = SultanSimilarity.compare(text1,text2);
 	    
 	    //double RBOsim = RBOSimilarity.compare(sentences[0], sentences[1]); //RBO measure for IR comparison
 	    //double cosinesim = TfIdfSimilarity.compare(sent0, sent1);
@@ -98,6 +100,7 @@ public class TestCoreNLP {
     	System.err.println("Edit distance similarity(words): "+editsim1);
     	System.err.println("IR similarity: "+IRsim);
     	System.err.println("Sphynx similarity: "+sphynxsim);
+    	System.err.println("sultan similarity: "+sultansim);
     	System.err.println("Geo similarity: "+geosim);
     	
 	}
