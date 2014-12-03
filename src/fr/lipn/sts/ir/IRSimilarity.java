@@ -22,14 +22,28 @@ import fr.lipn.sts.SOPAConfiguration;
 import fr.lipn.sts.measures.SimilarityMeasure;
 
 public class IRSimilarity implements SimilarityMeasure {
-	//private static String index = "/tempo/indexes/AQUAINT_indexed";
+	private String index;
 	
-	private final static int K=70;
+	private final int K=70;
+	/**
+	 * builds IRSimilarity with the base IR index in the SOPA Configuration file
+	 */
+	public IRSimilarity() {
+		this.index=SOPAConfiguration.IR_INDEX;
+	}
 	
-	public static double compare(String req1, String req2){
+	public IRSimilarity(String index) {
+		this.index=index;
+	}
+	
+	public void setIndex(String index){
+		this.index=index;
+	}
+	
+	public double compare(String req1, String req2){
 		double ret = 0d;
 		try {
-			IndexReader reader = IndexReader.open(FSDirectory.open(new File(SOPAConfiguration.IR_INDEX)));
+			IndexReader reader = IndexReader.open(FSDirectory.open(new File(this.index)));
 			IndexSearcher searcher = new IndexSearcher(reader);
 			searcher.setSimilarity(new BM25Similarity());
 			Analyzer analyzer = new EnglishAnalyzer(Version.LUCENE_41);

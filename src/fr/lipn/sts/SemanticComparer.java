@@ -16,9 +16,13 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.util.ArrayCoreMap;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import fr.lipn.sts.align.sphynx.SphynxSimilarity;
+import fr.lipn.sts.align.sultan.SultanSimilarity;
 import fr.lipn.sts.basic.Levenshtein;
+import fr.lipn.sts.basic.SentenceLengthSimilarity;
 import fr.lipn.sts.basic.TfIdfSimilarity;
 import fr.lipn.sts.ckpd.NGramSimilarity;
+import fr.lipn.sts.ckpd.SkipGramSimilarity;
 import fr.lipn.sts.geo.BlueMarble;
 import fr.lipn.sts.geo.GeographicScopeSimilarity;
 import fr.lipn.sts.ir.IRSimilarity;
@@ -107,7 +111,7 @@ public class SemanticComparer {
         SOPAConfiguration.load(); //Necessary to load configuration parameters related to resources
         
 	    Properties props = new Properties();
-	    props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, sentiment, parse");
+	    props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse");
 	    props.setProperty("ssplit.isOneSentence", "true"); //every string is one sentence
 	    props.setProperty("ner.applyNumericClassifiers", "true");
 	    props.setProperty("sutime.markTimeRanges", "true");
@@ -144,6 +148,9 @@ public class SemanticComparer {
 	    //DepComparer.parse(inputfile+".lorg.deps.xml");
 	    
 	    int i=0;
+	    DBPediaChunkBasedAnnotator chunkannotator = new DBPediaChunkBasedAnnotator(SOPAConfiguration.DBPedia_INDEX);
+	    DBPediaSimilarity.setAnnotator(chunkannotator);
+	    
 	    while((line=reader.readLine())!=null){
 	    	String [] sentences = line.split("\t");
 	    	
@@ -162,42 +169,54 @@ public class SemanticComparer {
 	    	
 	    	ArrayCoreMap sent0 = (ArrayCoreMap) ann0.get(CoreAnnotations.SentencesAnnotation.class).get(0);
 	    	ArrayCoreMap sent1 = (ArrayCoreMap) ann1.get(CoreAnnotations.SentencesAnnotation.class).get(0);
+	    		
+	    	IRSimilarity irs = new IRSimilarity();
+	    	IRSimilarity irswac= new IRSimilarity("/media/expT1/index/ukwac");
 	    	
-	    	//DBPediaChunkBasedAnnotator chunkannotator = new DBPediaChunkBasedAnnotator(SOPAConfiguration.DBPedia_INDEX);
-	    	//DBPediaSimilarity.setAnnotator(chunkannotator);
-		    //double DBPsim=DBPediaSimilarity.compare(sentences[0], sentences[1]); //TODO: fix chunkannotator
+		    double DBPsim=DBPediaSimilarity.compare(sentences[0], sentences[1]);
 		    double NERsim=NERSimilarity.compare(sent0, sent1);
 		    double sim=NGramSimilarity.compare(sent0, sent1);
 		    double conceptsim=ConceptualSimilarity.compare(sent0, sent1);
 		    double wnsim=JWSSimilarity.compare(sent0, sent1);
 		    double depsim = DepBasedSimilarity.compare(sent0, sent1);
 		    double editsim = Levenshtein.characterBasedSimilarity(sentences[0], sentences[1]);
-		    double IRsim = IRSimilarity.compare(sentences[0], sentences[1]);
-		    //double RBOsim = RBOSimilarity.compare(sentences[0], sentences[1]); //RBO measure for IR comparison
+		    double IRsim = irs.compare(sentences[0], sentences[1]);
+		    double wacSim = irswac.compare(sentences[0], sentences[1]);
+		    double RBOsim = RBOSimilarity.compare(sentences[0], sentences[1]); //RBO measure for IR comparison
 		    double cosinesim = TfIdfSimilarity.compare(sent0, sent1);
 		    double geosim = GeographicScopeSimilarity.compare(sent0, sent1);
+		    double sksim=SkipGramSimilarity.compare(sent0, sent1);
+		    double sphynxsim = SphynxSimilarity.compare(sent0,sent1);
+		    double sultansim = SultanSimilarity.compare(sentences[0],sentences[1]);
+		    double lsim = SentenceLengthSimilarity.compare(sentences[0], sentences[1]);
+		    
 		    //double spectsim = SpectralSimilarity.compare(sent0, sent1);
 		    
-		    //sentence lengths
-		    /*double t0 = Math.log(sentences[0].length());
-		    double t1 = Math.log(sentences[1].length());
-		    */
+		
 		    if(SOPAConfiguration.VERBOSE) {
 		    	System.err.println("Pair # "+(i+1));
 		    	System.err.println(sentences[0]);
 			    System.err.println(sentences[1]);
-			    System.err.println("GS score: "+gsLabels.elementAt(i));
+			    if(TRAIN_MODE) System.err.println("GS score: "+gsLabels.elementAt(i));
 			    System.err.println(":");
-			    System.err.println("Geographic Scope similarity: "+5.0 *geosim);
 			    System.err.println("CKPD (n-gram) similarity: "+5.0 *sim);
 			    System.err.println("Conceptual (WordNet) similarity: "+5.0 *conceptsim);
-			    System.err.println("Conceptual (Jiang-Conrath) similarity: "+5.0 *wnsim);
 			    System.err.println("Dependency-based (syntactic) similarity: "+5.0 *depsim);
 			    System.err.println("Edit distance similarity: "+5.0 *editsim);
 			    System.err.println("Cosine distance (tf.idf) similarity: "+5.0 *cosinesim);
 			    System.err.println("NER overlap : "+5.0 *NERsim);
+			    System.err.println("Conceptual (Jiang-Conrath) similarity: "+5.0 *wnsim);
 			    System.err.println("IR-based similarity : "+5.0 *IRsim);
-			    //System.err.println("DBPedia similarity : "+5.0 *DBPsim);
+			    System.err.println("Geographic Scope similarity: "+5.0 *geosim);
+			    
+			    System.err.println("RBO similarity : "+RBOsim);
+			    System.err.println("DBPedia similarity : "+5.0 *DBPsim);
+			    System.err.println("UKWaC similarity : "+wacSim);
+			    System.err.println("SkipGram similarity : "+sksim);
+			    System.err.println("Sphynx similarity : "+sphynxsim);
+			    System.err.println("Sultan similarity : "+sultansim);
+			    System.err.println("Length similarity : "+lsim);
+			    
 			    //System.err.println("Spectral distance (the smaller better): "+spectsim);
 			    System.err.println("--------------");
 			    
@@ -208,11 +227,8 @@ public class SemanticComparer {
 	    		} else {
 	    			System.out.print("0.0 ");
 	    		}
-	    		//System.out.println("1:"+sim+" 2:"+conceptsim+" 3:"+depsim+" 4:"+editsim+" 5:"+cosinesim+" 6:"+NERsim+" 7:"+wnsim+" 8:"+IRsim);
-	    		//System.out.println("1:"+sim+" 2:"+conceptsim+" 3:"+depsim+" 4:"+editsim+" 5:"+cosinesim+" 6:"+NERsim+" 7:"+wnsim+" 8:"+IRsim+" 9:"+DBPsim+" 10:"+geosim+" 11:"+spectsim);
-	    		//System.out.println("1:"+sim+" 2:"+conceptsim+" 3:"+depsim+" 4:"+editsim+" 5:"+cosinesim+" 6:"+NERsim+" 7:"+wnsim+" 8:"+IRsim+" 9:"+DBPsim+" 10:"+geosim);
-	    		System.out.println("1:"+sim+" 2:"+conceptsim+" 3:"+depsim+" 4:"+editsim+" 5:"+cosinesim+" 6:"+NERsim+" 7:"+wnsim+" 8:"+IRsim+" 9:"+geosim);
-	    		
+	    		//System.out.println("1:"+sim+" 2:"+conceptsim+" 3:"+depsim+" 4:"+editsim+" 5:"+cosinesim+" 6:"+NERsim+" 7:"+wnsim+" 8:"+IRsim+" 9:"+geosim);
+	    		System.out.println("1:"+sim+" 2:"+conceptsim+" 3:"+depsim+" 4:"+editsim+" 5:"+cosinesim+" 6:"+NERsim+" 7:"+wnsim+" 8:"+IRsim+" 9:"+geosim+" 10:"+RBOsim+ " 11:"+DBPsim+" 12:"+wacSim+" 13:"+sksim+" 14:"+sphynxsim+" 15:"+sultansim+" 16:"+lsim);
 		    }
 		    
 		    i++;
@@ -221,5 +237,6 @@ public class SemanticComparer {
 	    
 		
 	}
+	
 
 }

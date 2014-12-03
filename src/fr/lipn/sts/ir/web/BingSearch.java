@@ -18,7 +18,7 @@ public class BingSearch {
   public static String search(String query) throws Exception {
     String bingUrl = "https://api.datamarket.azure.com/Bing/SearchWeb/v1/Web?Query=%27" + java.net.URLEncoder.encode(query) + "%27&$format=JSON";
     
-    String accountKey=accountKeys[calls%2];
+    String accountKey=accountKeys[0];
     
     byte[] accountKeyBytes = Base64.encodeBase64((accountKey + ":" + accountKey).getBytes());
     //byte[] accountKeyBytes = Base64.encodeBase64((accountKey).getBytes());

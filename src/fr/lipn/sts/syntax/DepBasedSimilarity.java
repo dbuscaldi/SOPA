@@ -61,7 +61,7 @@ public class DepBasedSimilarity implements SimilarityMeasure {
 			Collection<TypedDependency> td = gs.typedDependenciesCollapsed();
 
 			Object[] list = td.toArray();
-			System.out.println(list.length);
+			//System.out.println(list.length);
 			TypedDependency typedDependency;
 			for (Object object : list) {
 				typedDependency = (TypedDependency) object;
@@ -116,7 +116,7 @@ public class DepBasedSimilarity implements SimilarityMeasure {
 		Vector<Dependency> d0 = getDeps(tree0, sent0);
 		Tree tree1 = sent1.get(TreeCoreAnnotations.TreeAnnotation.class);
 		Vector<Dependency> d1 = getDeps(tree1, sent1);
-		for(Dependency d : d0) System.err.println(d);
+		//for(Dependency d : d0) System.err.println(d);
 		DepPair deps = new DepPair(d0, d1);
 		deps.setAlignments();
 		
