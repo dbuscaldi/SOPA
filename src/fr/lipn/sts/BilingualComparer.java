@@ -13,32 +13,18 @@ import com.martiansoftware.jsap.JSAPResult;
 import com.martiansoftware.jsap.Switch;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.util.ArrayCoreMap;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import fr.lipn.sts.align.sphynx.SphynxSimilarity;
-import fr.lipn.sts.align.sultan.SultanSimilarity;
-import fr.lipn.sts.basic.Levenshtein;
-import fr.lipn.sts.basic.SentenceLengthSimilarity;
-import fr.lipn.sts.basic.TfIdfSimilarity;
-import fr.lipn.sts.ckpd.NGramSimilarity;
-import fr.lipn.sts.ckpd.SkipGramSimilarity;
+import edu.stanford.nlp.util.ArrayCoreMap;
 import fr.lipn.sts.geo.BlueMarble;
-import fr.lipn.sts.geo.GeographicScopeSimilarity;
 import fr.lipn.sts.ir.IRSimilarity;
-import fr.lipn.sts.ir.RBOSimilarity;
 import fr.lipn.sts.ner.DBPediaChunkBasedAnnotator;
 import fr.lipn.sts.ner.DBPediaSimilarity;
-import fr.lipn.sts.ner.NERSimilarity;
-import fr.lipn.sts.semantic.JWSSimilarity;
-import fr.lipn.sts.semantic.SpectralDistance;
 import fr.lipn.sts.semantic.proxygenea.ConceptualSimilarity;
-import fr.lipn.sts.syntax.DepBasedSimilarity;
 import fr.lipn.sts.tools.GoogleTFFactory;
 import fr.lipn.sts.tools.WordNet;
-import fr.lipn.sts.twitter.TwitterComparer;
 
-public class SemanticComparer {
+public class BilingualComparer {
 	public static boolean TRAIN_MODE=false;
 	/**
 	 * @param args
@@ -110,23 +96,25 @@ public class SemanticComparer {
 	    
         SOPAConfiguration.load(); //Necessary to load configuration parameters related to resources
         
-	    Properties props = new Properties();
-	    props.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse");
-	    props.setProperty("ssplit.isOneSentence", "true"); //every string is one sentence
-	    props.setProperty("ner.applyNumericClassifiers", "true");
-	    props.setProperty("sutime.markTimeRanges", "true");
-	    props.setProperty("sutime.includeRange", "true");
+	    Properties propsEN = new Properties();
+	    Properties propsES = new Properties();
 	    
-	    // Check if it is necessary to use Spanish settings
-	    if(SOPAConfiguration.LANG.equals("es")) {
-	    	props.setProperty("tokenize.language", "es");
-	    	props.setProperty("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger");
-	    	props.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz");
-	    	props.setProperty("ner.model", "edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz");
+	    propsEN.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse");
+	    propsES.setProperty("annotators", "tokenize, ssplit, pos, lemma, ner, parse");
+	    propsEN.setProperty("ssplit.isOneSentence", "true"); //every string is one sentence
+	    propsES.setProperty("ssplit.isOneSentence", "true");
+	    propsEN.setProperty("ner.applyNumericClassifiers", "true");
+	    propsEN.setProperty("sutime.markTimeRanges", "true");
+	    propsEN.setProperty("sutime.includeRange", "true");
+	    
+	    propsES.setProperty("tokenize.language", "es");
+	    propsES.setProperty("pos.model", "edu/stanford/nlp/models/pos-tagger/spanish/spanish-distsim.tagger");
+	    propsES.setProperty("parse.model", "edu/stanford/nlp/models/lexparser/spanishPCFG.ser.gz");
+	    propsES.setProperty("ner.model", "edu/stanford/nlp/models/ner/spanish.ancora.distsim.s512.crf.ser.gz");
 	    	
-	    }
 	    
-	    StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+	    StanfordCoreNLP pipelineEN = new StanfordCoreNLP(propsEN);
+	    StanfordCoreNLP pipelineES = new StanfordCoreNLP(propsES);
 
 	    GoogleTFFactory.init(SOPAConfiguration.GoogleTF);
 	    WordNet.init(SOPAConfiguration.WN_HOME);
@@ -164,14 +152,14 @@ public class SemanticComparer {
 	    	Annotation ann0 = new Annotation(sentences[0]);
 	    	Annotation ann1 = new Annotation(sentences[1]);
 	    	
-	    	pipeline.annotate(ann0);
-	    	pipeline.annotate(ann1);
+	    	pipelineEN.annotate(ann0);
+	    	pipelineES.annotate(ann1);
 	    	
 	    	ArrayCoreMap sent0 = (ArrayCoreMap) ann0.get(CoreAnnotations.SentencesAnnotation.class).get(0);
 	    	ArrayCoreMap sent1 = (ArrayCoreMap) ann1.get(CoreAnnotations.SentencesAnnotation.class).get(0);
 	    		
-	    	IRSimilarity irs = new IRSimilarity();
-	    	IRSimilarity irswac= new IRSimilarity("/media/expT1/index/ukwac");
+	    	//IRSimilarity irs = new IRSimilarity();
+	    	//IRSimilarity irswac= new IRSimilarity("/media/expT1/index/ukwac");
 	    	
 		    //double DBPsim=DBPediaSimilarity.compare(sentences[0], sentences[1]);
 		    //double NERsim=NERSimilarity.compare(sent0, sent1);
@@ -234,9 +222,5 @@ public class SemanticComparer {
 		    i++;
 	    }
 	    reader.close();
-	    
-		
 	}
-	
-
 }

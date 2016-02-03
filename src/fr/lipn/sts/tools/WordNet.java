@@ -337,7 +337,7 @@ public class WordNet {
 	 * @param pos
 	 * @return
 	 */
-	private static HashSet<ISynsetID> getNounSynsets(String lang, String text, String pos) {
+	public static HashSet<ISynsetID> getNounSynsets(String lang, String text, String pos) {
 		HashSet<ISynsetID> synsets = new HashSet<ISynsetID>();
 		
 		String file_index;
